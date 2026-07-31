@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Clicking Game · Kodewt</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: #1e1e1e;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      margin: 0;
+      padding: 16px;
+    }
+
+    .game-wrapper {
+      background: #ffffff;
+      border-radius: 40px;
+      padding: 30px 24px 30px 24px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      position: relative;
+      transition: opacity 0.2s;
+    }
+
+    /* Loading Screen */
+    .loading-screen {
+      position: absolute;
+      inset: 0;
+      background: #1e1e1e;
+      border-radius: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      transition: opacity 0.7s ease;
+      pointer-events: none;
+      padding: 20px;
+    }
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-logo {
+      font-size: 2.6rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #f9d976, #f39c12);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .loading-logo span {
+      font-weight: 300;
+      background: none;
+      -webkit-text-fill-color: #bbb;
+      color: #bbb;
+    }
+    .progress-bar-track {
+      width: 80%;
+      max-width: 300px;
+      height: 8px;
+      background: #3a3a3a;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f1c40f, #e67e22);
+      border-radius: 20px;
+      transition: width 0.15s linear;
+    }
+    .loading-text {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-top: 12px;
+      letter-spacing: 1px;
+    }
+
+    /* Main Game */
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 10px;
+    }
+    .stat-box {
+      background: #f5f5f5;
+      padding: 12px 20px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
+      min-width: 100px;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      font-weight: 600;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2c2c2c;
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-value.cps {
+      color: #2d7d46;
+    }
+
+    /* Click Button */
+    .click-area {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 10px 0;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .smiley-btn {
+      width: 100%;
+      height: 100%;
+      font-size: 8rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      border-radius: 50%;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+      transition: transform 0.08s ease, box-shadow 0.15s ease;
+      will-change: transform;
+      border: 2px solid #eee;
+      background: #ffffff;
+      position: relative;
+      z-index: 2;
+    }
+    .smiley-btn:active {
+      transform: scale(0.94);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+    .smiley-btn.side-click {
+      transform: scale(0.92) rotate(8deg);
+    }
+
+    /* Floating +1 / +2 animations */
+    .float-text {
+      position: absolute;
+      font-size: 2.2rem;
+      font-weight: 700;
+      pointer-events: none;
+      z-index: 10;
+      animation: floatUp 0.9s ease-out forwards;
+      color: #2d7d46;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .float-text.bonus {
+      color: #e67e22;
+      font-size: 2.6rem;
+    }
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.8);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-90px) scale(1.2);
+      }
+    }
+
+    /* Side hit indicators */
+    .side-indicator {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(230, 126, 34, 0.15);
+      pointer-events: none;
+      animation: sidePulse 0.5s ease-out forwards;
+      z-index: 1;
+    }
+    @keyframes sidePulse {
+      0% { transform: scale(0.5); opacity: 0.8; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    /* Footer */
+    .footer-note {
+      color: #bbb;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      letter-spacing: 0.3px;
+    }
+    .footer-note span {
+      color: #888;
+    }
+
+    @media (max-width: 480px) {
+      .game-wrapper { padding: 20px 16px; }
+      .click-area { width: 160px; height: 160px; }
+      .smiley-btn { font-size: 6.5rem; }
+      .stat-box { min-width: 70px; padding: 10px 14px; }
+      .stat-value { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="game-wrapper" id="app">
+
+  <!-- LOADING -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">Kodewt’s <span>The Clicking Game</span></div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="loading-text" id="loadingText">0%</div>
+  </div>
+
+  <!-- GAME -->
+  <div class="game-container">
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-label">Clicks</div>
+        <div class="stat-value" id="clickCount">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">CPS</div>
+        <div class="stat-value cps" id="cpsDisplay">0.0</div>
+      </div>
+    </div>
+
+    <div class="click-area" id="clickArea">
+      <div class="smiley-btn" id="smileyBtn">😊</div>
+    </div>
+
+    <div class="footer-note">
+      <span>click center → +1 &nbsp;·&nbsp; click edge → +2</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ----- LOADING 5-6 sec -----
+    const loadingScreen = document.getElementById('loadingScreen');
+    const progressFill = document.getElementById('progressFill');
+    const loadingText = document.getElementById('loadingText');
+    let loadInterval = null;
+
+    function startLoading() {
+      const duration = 5500;
+      const stepTime = 60;
+      const totalSteps = duration / stepTime;
+      let step = 0;
+      loadInterval = setInterval(() => {
+        step++;
+        const progress = Math.min(step / totalSteps, 1);
+        const percent = Math.round(progress * 100);
+        progressFill.style.width = percent + '%';
+        loadingText.textContent = percent + '%';
+        if (progress >= 1) {
+          clearInterval(loadInterval);
+          loadInterval = null;
+          loadingScreen.classList.add('hidden');
+          initGame();
+        }
+      }, stepTime);
+    }
+
+    // ----- GAME LOGIC -----
+    let clickCount = 0;
+    let cps = 0;
+    let clickTimestamps = [];
+    let cpsUpdateInterval = null;
+
+    const clickCountEl = document.getElementById('clickCount');
+    const cpsDisplayEl = document.getElementById('cpsDisplay');
+    const smileyBtn = document.getElementById('smileyBtn');
+    const clickArea = document.getElementById('clickArea');
+
+    // Track CPS every 500ms
+    function updateCPS() {
+      const now = Date.now();
+      // Keep only clicks from last 1 second
+      clickTimestamps = clickTimestamps.filter(t => now - t < 1000);
+      cps = clickTimestamps.length;
+      cpsDisplayEl.textContent = cps.toFixed(1);
+    }
+
+    function initGame() {
+      clickCount = 0;
+      clickTimestamps = [];
+      clickCountEl.textContent = '0';
+      cpsDisplayEl.textContent = '0.0';
+      if (cpsUpdateInterval) clearInterval(cpsUpdateInterval);
+      cpsUpdateInterval = setInterval(updateCPS, 200);
+
+      // Remove any old listeners
+      clickArea.removeEventListener('click', handleClick);
+      clickArea.removeEventListener('touchstart', handleTouch);
+      // Add new listeners
+      clickArea.addEventListener('click', handleClick);
+      clickArea.addEventListener('touchstart', handleTouch, { passive: true });
+    }
+
+    function handleClick(e) {
+      e.preventDefault();
+      const rect = clickArea.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      processClick(x, y, rect.width, rect.height);
+    }
+
+    function handleTouch(e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      if (!touch) return;
+      const rect = clickArea.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      processClick(x, y, rect.width, rect.height);
+    }
+
+    function processClick(x, y, width, height) {
+      // Center zone: 40% of radius from center
+      const cx = width / 2;
+      const cy = height / 2;
+      const dx = x - cx;
+      const dy = y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const maxDist = Math.min(width, height) / 2;
+      const isCenter = dist < maxDist * 0.4;
+
+      let points = 1;
+      let isBonus = false;
+      if (!isCenter) {
+        points = 2;
+        isBonus = true;
+        // Side click animation: rotate the smiley
+        smileyBtn.classList.add('side-click');
+        setTimeout(() => {
+          smileyBtn.classList.remove('side-click');
+        }, 120);
+
+        // Show side pulse indicator
+        const indicator = document.createElement('div');
+        indicator.className = 'side-indicator';
+        indicator.style.left = (x - 15) + 'px';
+        indicator.style.top = (y - 15) + 'px';
+        clickArea.appendChild(indicator);
+        setTimeout(() => {
+          if (indicator.parentNode) indicator.remove();
+        }, 500);
+      } else {
+        // Center click: scale animation
+        smileyBtn.style.transform = 'scale(0.92)';
+        setTimeout(() => {
+          smileyBtn.style.transform = '';
+        }, 100);
+      }
+
+      // Update count
+      clickCount += points;
+      clickCountEl.textContent = clickCount;
+
+      // Record for CPS
+      clickTimestamps.push(Date.now());
+
+      // Floating +1 / +2
+      const floatEl = document.createElement('div');
+      floatEl.className = 'float-text' + (isBonus ? ' bonus' : '');
+      floatEl.textContent = isBonus ? '+2' : '+1';
+      // Position near click
+      const offsetX = (Math.random() - 0.5) * 40;
+      const offsetY = (Math.random() - 0.5) * 30 - 10;
+      floatEl.style.left = (x + offsetX) + 'px';
+      floatEl.style.top = (y + offsetY) + 'px';
+      clickArea.appendChild(floatEl);
+      setTimeout(() => {
+        if (floatEl.parentNode) floatEl.remove();
+      }, 900);
+
+      // Update CPS immediately (smooth)
+      updateCPS();
+    }
+
+    // ----- START -----
+    startLoading();
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (cpsUpdateInterval) clearInterval(cpsUpdateInterval);
+    });
+
+  })();
+</script>
+</body>
+</html>
