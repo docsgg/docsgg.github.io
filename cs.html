@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colored Squares · Kodewt</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #1e1e1e;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      margin: 0;
+      padding: 16px;
+    }
+
+    .game-wrapper {
+      background: #2a2a2a;
+      border-radius: 40px;
+      padding: 30px 24px 30px 24px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+      position: relative;
+      transition: opacity 0.2s;
+    }
+
+    /* Loading Screen */
+    .loading-screen {
+      position: absolute;
+      inset: 0;
+      background: #1e1e1e;
+      border-radius: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      transition: opacity 0.7s ease;
+      pointer-events: none;
+      padding: 20px;
+    }
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-logo {
+      font-size: 2.6rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #f9d976, #f39c12);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+    }
+    .loading-logo span {
+      font-weight: 300;
+      background: none;
+      -webkit-text-fill-color: #bbb;
+      color: #bbb;
+    }
+    .progress-bar-track {
+      width: 80%;
+      max-width: 300px;
+      height: 8px;
+      background: #3a3a3a;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f1c40f, #e67e22);
+      border-radius: 20px;
+      transition: width 0.15s linear;
+    }
+    .loading-text {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-top: 12px;
+      letter-spacing: 1px;
+    }
+
+    /* Main game */
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .relax-bg {
+      position: relative;
+      background: #2c2c2c;
+      border-radius: 28px;
+      padding: 20px 16px 16px 16px;
+      overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+    }
+    .relax-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 70%, rgba(52, 152, 219, 0.03) 0%, transparent 50%);
+      animation: relaxGlow 12s infinite alternate ease-in-out;
+      pointer-events: none;
+      border-radius: 28px;
+    }
+    @keyframes relaxGlow {
+      0% { opacity: 0.4; transform: scale(1) rotate(0deg); }
+      100% { opacity: 1; transform: scale(1.2) rotate(3deg); }
+    }
+
+    .level-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 2;
+    }
+    .level-badge {
+      background: #3d3d3d;
+      padding: 8px 18px;
+      border-radius: 40px;
+      color: #ddd;
+      font-weight: 500;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    }
+    .level-badge span {
+      color: #f1c40f;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
+    /* Reference grid (3x3) */
+    .reference-label {
+      color: #888;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-align: center;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 2;
+    }
+    .grid-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    }
+    .grid-3x3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: #222;
+      padding: 12px;
+      border-radius: 20px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+      width: 200px;
+    }
+    .grid-3x3 .cell {
+      aspect-ratio: 1 / 1;
+      background: #3a3a3a;
+      border-radius: 12px;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: inset 0 -3px 0 #1f1f1f;
+      cursor: pointer;
+      position: relative;
+    }
+    .grid-3x3 .cell.filled {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 -3px 0 rgba(0,0,0,0.2);
+    }
+    .grid-3x3 .cell.empty {
+      background: #3a3a3a !important;
+      opacity: 0.4;
+    }
+    .grid-3x3 .cell.dragging {
+      transform: scale(0.92);
+      opacity: 0.7;
+      z-index: 10;
+    }
+
+    .reference-grid .cell {
+      cursor: default;
+      border: 2px solid #444;
+    }
+    .player-grid .cell {
+      border: 2px solid #2a2a2a;
+    }
+    .player-grid .cell:hover {
+      transform: scale(1.04);
+      border-color: #f1c40f;
+    }
+
+    /* Message & buttons */
+    .message-box {
+      text-align: center;
+      min-height: 28px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #d4d4d4;
+      margin: 12px 0 6px 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      margin-top: 10px;
+      position: relative;
+      z-index: 2;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: #3d3d3d;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #ececec;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 6px 0 #1f1f1f;
+      flex: 1 1 auto;
+      min-width: 100px;
+    }
+    .btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #1f1f1f;
+    }
+    .btn-primary {
+      background: #2d7d46;
+      box-shadow: 0 6px 0 #1a4f2e;
+    }
+    .btn-primary:active {
+      box-shadow: 0 2px 0 #1a4f2e;
+    }
+    .btn-skip {
+      background: #5f4a36;
+      box-shadow: 0 6px 0 #3d2f20;
+    }
+    .btn-skip:active {
+      box-shadow: 0 2px 0 #3d2f20;
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      transform: translateY(2px);
+      box-shadow: 0 3px 0 #1f1f1f;
+      pointer-events: none;
+    }
+    .btn-shuffle {
+      background: #3d4a6b;
+      box-shadow: 0 6px 0 #1f2a3f;
+    }
+    .btn-shuffle:active {
+      box-shadow: 0 2px 0 #1f2a3f;
+    }
+
+    @media (max-width: 480px) {
+      .game-wrapper { padding: 16px; }
+      .grid-3x3 { width: 160px; padding: 8px; gap: 6px; }
+      .grid-container { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="game-wrapper" id="app">
+
+  <!-- LOADING -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">Kodewt’s <span>Colored Squares</span></div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="loading-text" id="loadingText">0%</div>
+  </div>
+
+  <!-- GAME -->
+  <div class="game-container">
+    <div class="relax-bg">
+      <div class="level-header">
+        <div class="level-badge">Level <span id="levelDisplay">1</span></div>
+        <div style="color:#777; font-size:0.9rem;">🎯</div>
+      </div>
+
+      <div class="reference-label">▼ REFERENCE</div>
+      <div class="grid-container">
+        <div class="grid-3x3 reference-grid" id="referenceGrid"></div>
+      </div>
+
+      <div style="margin-top: 14px; border-top: 1px solid #3a3a3a; padding-top: 12px;">
+        <div class="reference-label" style="color:#aaa;">▼ YOUR BOARD</div>
+        <div class="grid-container">
+          <div class="grid-3x3 player-grid" id="playerGrid"></div>
+        </div>
+      </div>
+
+      <div class="message-box" id="messageBox"> </div>
+
+      <div class="action-bar">
+        <button class="btn btn-shuffle" id="shuffleBtn">🔀 Shuffle</button>
+        <button class="btn btn-primary" id="readyBtn">✅ Ready</button>
+        <button class="btn btn-skip" id="skipBtn">⏭️ Skip</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // LOADING 5-6 sec
+    const loadingScreen = document.getElementById('loadingScreen');
+    const progressFill = document.getElementById('progressFill');
+    const loadingText = document.getElementById('loadingText');
+    let loadInterval = null;
+
+    function startLoading() {
+      const duration = 5500;
+      const stepTime = 60;
+      const totalSteps = duration / stepTime;
+      let step = 0;
+      loadInterval = setInterval(() => {
+        step++;
+        const progress = Math.min(step / totalSteps, 1);
+        const percent = Math.round(progress * 100);
+        progressFill.style.width = percent + '%';
+        loadingText.textContent = percent + '%';
+        if (progress >= 1) {
+          clearInterval(loadInterval);
+          loadInterval = null;
+          loadingScreen.classList.add('hidden');
+          initGame();
+        }
+      }, stepTime);
+    }
+
+    // ---- GAME ----
+    const COLORS = [
+      '#e74c3c', // red
+      '#3498db', // blue
+      '#2ecc71', // green
+      '#f1c40f', // yellow
+      '#9b59b6', // purple
+      '#e67e22', // orange
+      '#1abc9c', // teal
+      '#e84393', // pink
+    ];
+
+    let currentLevel = 1;
+    let referencePattern = [];      // 9 colors (indices)
+    let playerGrid = [];           // 9 colors (indices)
+    let dragState = {
+      active: false,
+      fromIndex: -1,
+      startX: 0,
+      startY: 0,
+    };
+
+    const refGridEl = document.getElementById('referenceGrid');
+    const playerGridEl = document.getElementById('playerGrid');
+    const levelDisplay = document.getElementById('levelDisplay');
+    const messageBox = document.getElementById('messageBox');
+    const readyBtn = document.getElementById('readyBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+
+    function generateLevel() {
+      // Random 9 colors for reference
+      referencePattern = Array.from({ length: 9 }, () => Math.floor(Math.random() * COLORS.length));
+      // Player grid starts as a random permutation of the reference colors
+      playerGrid = [...referencePattern];
+      shuffleArray(playerGrid);
+      renderGrids();
+      updateMessage('Swap tiles to match the reference', '#b0b0b0');
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderGrids() {
+      renderReference();
+      renderPlayer();
+    }
+
+    function renderReference() {
+      refGridEl.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell filled';
+        cell.style.backgroundColor = COLORS[referencePattern[i]];
+        cell.style.boxShadow = 'inset 0 -3px 0 rgba(0,0,0,0.3)';
+        refGridEl.appendChild(cell);
+      }
+    }
+
+    function renderPlayer() {
+      playerGridEl.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell filled';
+        cell.dataset.index = i;
+        const colorIdx = playerGrid[i];
+        cell.style.backgroundColor = COLORS[colorIdx];
+        cell.style.boxShadow = 'inset 0 -3px 0 rgba(0,0,0,0.3)';
+        // Drag events
+        cell.draggable = false;
+        cell.addEventListener('mousedown', (e) => onDragStart(e, i));
+        cell.addEventListener('touchstart', (e) => onDragStartTouch(e, i), { passive: false });
+        playerGridEl.appendChild(cell);
+      }
+      // Global move/end
+      document.removeEventListener('mousemove', onDragMove);
+      document.removeEventListener('mouseup', onDragEnd);
+      document.removeEventListener('touchmove', onDragMoveTouch);
+      document.removeEventListener('touchend', onDragEndTouch);
+      document.addEventListener('mousemove', onDragMove);
+      document.addEventListener('mouseup', onDragEnd);
+      document.addEventListener('touchmove', onDragMoveTouch, { passive: false });
+      document.addEventListener('touchend', onDragEndTouch, { passive: false });
+    }
+
+    // ---- Drag & Drop (swap) ----
+    function onDragStart(e, index) {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      dragState.active = true;
+      dragState.fromIndex = index;
+      dragState.startX = e.clientX;
+      dragState.startY = e.clientY;
+      const cell = playerGridEl.querySelector(`[data-index="${index}"]`);
+      if (cell) cell.classList.add('dragging');
+    }
+
+    function onDragStartTouch(e, index) {
+      const touch = e.touches[0];
+      if (!touch) return;
+      e.preventDefault();
+      dragState.active = true;
+      dragState.fromIndex = index;
+      dragState.startX = touch.clientX;
+      dragState.startY = touch.clientY;
+      const cell = playerGridEl.querySelector(`[data-index="${index}"]`);
+      if (cell) cell.classList.add('dragging');
+    }
+
+    function onDragMove(e) {
+      if (!dragState.active) return;
+      e.preventDefault();
+      const target = document.elementFromPoint(e.clientX, e.clientY);
+      if (target && target.classList.contains('cell') && target.closest('.player-grid')) {
+        const toIndex = parseInt(target.dataset.index);
+        if (toIndex !== dragState.fromIndex && !isNaN(toIndex)) {
+          // swap
+          const from = dragState.fromIndex;
+          const to = toIndex;
+          [playerGrid[from], playerGrid[to]] = [playerGrid[to], playerGrid[from]];
+          // remove dragging class from old
+          const oldCell = playerGridEl.querySelector(`[data-index="${from}"]`);
+          if (oldCell) oldCell.classList.remove('dragging');
+          // re-render
+          renderPlayer();
+          // re-apply dragging to new cell with same fromIndex
+          const newCell = playerGridEl.querySelector(`[data-index="${from}"]`);
+          if (newCell) newCell.classList.add('dragging');
+          dragState.fromIndex = from; // keep tracking
+          updateMessage('Swapped!', '#7ec8a0');
+        }
+      }
+    }
+
+    function onDragMoveTouch(e) {
+      if (!dragState.active) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      if (!touch) return;
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (target && target.classList.contains('cell') && target.closest('.player-grid')) {
+        const toIndex = parseInt(target.dataset.index);
+        if (toIndex !== dragState.fromIndex && !isNaN(toIndex)) {
+          const from = dragState.fromIndex;
+          const to = toIndex;
+          [playerGrid[from], playerGrid[to]] = [playerGrid[to], playerGrid[from]];
+          const oldCell = playerGridEl.querySelector(`[data-index="${from}"]`);
+          if (oldCell) oldCell.classList.remove('dragging');
+          renderPlayer();
+          const newCell = playerGridEl.querySelector(`[data-index="${from}"]`);
+          if (newCell) newCell.classList.add('dragging');
+          dragState.fromIndex = from;
+          updateMessage('Swapped!', '#7ec8a0');
+        }
+      }
+    }
+
+    function onDragEnd(e) {
+      if (!dragState.active) return;
+      const cell = playerGridEl.querySelector(`[data-index="${dragState.fromIndex}"]`);
+      if (cell) cell.classList.remove('dragging');
+      dragState.active = false;
+      dragState.fromIndex = -1;
+    }
+
+    function onDragEndTouch(e) {
+      if (!dragState.active) return;
+      const cell = playerGridEl.querySelector(`[data-index="${dragState.fromIndex}"]`);
+      if (cell) cell.classList.remove('dragging');
+      dragState.active = false;
+      dragState.fromIndex = -1;
+    }
+
+    // ---- Check solution ----
+    function checkSolution() {
+      for (let i = 0; i < 9; i++) {
+        if (playerGrid[i] !== referencePattern[i]) return false;
+      }
+      return true;
+    }
+
+    // ---- Next level ----
+    function nextLevel() {
+      currentLevel++;
+      levelDisplay.textContent = currentLevel;
+      generateLevel();
+      updateMessage('New level! 🧩', '#f1c40f');
+    }
+
+    // ---- Shuffle ----
+    function shufflePlayer() {
+      shuffleArray(playerGrid);
+      renderPlayer();
+      updateMessage('Shuffled! 🔀', '#b0b0b0');
+    }
+
+    // ---- UI updates ----
+    function updateMessage(text, color = '#d4d4d4') {
+      messageBox.textContent = text;
+      messageBox.style.color = color;
+    }
+
+    // ---- Buttons ----
+    function setupButtons() {
+      readyBtn.addEventListener('click', () => {
+        if (checkSolution()) {
+          updateMessage('🎉 Congratulations! Level complete!', '#2ecc71');
+          setTimeout(() => nextLevel(), 1000);
+        } else {
+          updateMessage('❌ Not matching. Keep swapping!', '#e74c3c');
+        }
+      });
+
+      skipBtn.addEventListener('click', () => {
+        nextLevel();
+        updateMessage('Skipped ⏩', '#b0b0b0');
+      });
+
+      shuffleBtn.addEventListener('click', shufflePlayer);
+    }
+
+    // ---- Init ----
+    function initGame() {
+      currentLevel = 1;
+      levelDisplay.textContent = '1';
+      generateLevel();
+      setupButtons();
+      updateMessage('Drag & drop tiles to match the reference', '#b0b0b0');
+    }
+
+    // ---- Start ----
+    startLoading();
+
+  })();
+</script>
+</body>
+</html>
