@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Languages - GeoDocs</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #4a90e2;
+            --border-color: #333;
+            --card-bg: #1e1e1e;
+            --text-muted: #888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Splash Screen --- */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 2.5rem;
+            font-weight: 700;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            cursor: pointer;
+        }
+        #splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        #splash a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        #splash a:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: var(--text-color);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .logo:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .hero p {
+            color: var(--text-muted);
+            max-width: 70ch;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        /* Region Section */
+        .region-section {
+            margin-bottom: 3rem;
+        }
+        .region-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Language Card */
+        .lang-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .lang-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        .lang-card p {
+            color: #ccc;
+            margin-bottom: 0.5rem;
+        }
+        .lang-card ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 0.5rem;
+        }
+        .lang-card ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .lang-card ul li::before {
+            content: "•";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        .lang-card b {
+            color: var(--text-color);
+        }
+
+        /* Comparison Box */
+        .compare-box {
+            background: #2a2a2a;
+            border-left: 4px solid var(--accent-color);
+            border-radius: 6px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+        .compare-box b {
+            color: var(--accent-color);
+        }
+
+        /* Nav */
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            margin: 40px 0 56px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        a.btn:hover {
+            background: #2a2a2a;
+            border-color: var(--text-muted);
+        }
+        .btn.primary {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+        a.btn.primary:hover {
+            background: #357abd;
+            border-color: #357abd;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .footer-credits {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .footer-credits a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-credits a:hover {
+            color: var(--text-color);
+        }
+        .font-misiori {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .font-misiori:hover {
+            color: var(--accent-color) !important;
+        }
+
+        @media (max-width: 720px) {
+            .lang-card { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash">
+        <a href="https://misiori.github.io" target="_blank">misiori</a>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="back-link">← Back</a>
+        <div class="logo">GeoDocs</div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="hero">
+            <h1>Languages & Scripts</h1>
+            <p>How to identify regions by the writing system. Recognizing the script family is often enough to make a confident guess.</p>
+        </div>
+
+        <!-- Europe -->
+        <section class="region-section">
+            <h2 class="region-title">Europe</h2>
+
+            <div class="lang-card">
+                <h3>Latin Alphabet (Most of Europe)</h3>
+                <p>Most European languages use the Latin alphabet, but unique letters and diacritics give away specific countries.</p>
+                <ul>
+                    <li><b>German:</b> ä, ö, ü, ß. Used in Germany, Austria, Switzerland, Luxembourg, Liechtenstein, Belgium, and Namibia (Africa).</li>
+                    <li><b>French:</b> ç, é, è, ê, à, ù, â, î, ô, û, ë, ï, ü, ÿ, œ, æ. Used in France, Belgium, Switzerland, Luxembourg, Canada (Quebec), and many African countries (Senegal, Tunisia, etc.).</li>
+                    <li><b>Spanish:</b> ñ, ¿, ¡. Used in Spain, Mexico, and most of Central/South America (except Brazil).</li>
+                    <li><b>Portuguese:</b> ã, õ, ç, á, é, í, ó, ú, â, ê, ô. Used in Portugal, Brazil, Angola, Mozambique, Cape Verde, Guinea-Bissau, São Tomé and Príncipe, East Timor, and Macau.</li>
+                    <li><b>Italian:</b> Uses standard Latin, but common words like <i>via</i>, <i>piazza</i>, <i>uscita</i>, <i>chiuso</i> are giveaways. Used in Italy, San Marino, Vatican City, and parts of Switzerland.</li>
+                    <li><b>Polish:</b> ą, ć, ę, ł, ń, ó, ś, ź, ż. Used in Poland.</li>
+                    <li><b>Czech/Slovak:</b> č, ď, ě, ň, ř, š, ť, ž, ů. Used in Czechia and Slovakia.</li>
+                    <li><b>Hungarian:</b> ő, ű (unique to Hungarian). Used in Hungary and parts of Romania/Slovakia.</li>
+                    <li><b>Romanian:</b> ă, â, î, ș, ț. Used in Romania and Moldova.</li>
+                    <li><b>Turkish:</b> ç, ğ, ı, İ, ö, ş, ü. Used in Turkey and Cyprus.</li>
+                    <li><b>Nordic:</b> Å, Æ, Ø (Danish/Norwegian), Ä, Ö (Swedish/Finnish). Used in Denmark, Norway, Sweden, Finland, and Iceland.</li>
+                    <li><b>Baltic:</b> Latvian uses ā, ē, ī, ū, ģ, ķ, ļ, ņ; Lithuanian uses ą, č, ę, ė, į, š, ų, ū, ž.</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Spanish vs Portuguese:</b> Spanish uses ñ and ¿/¡. Portuguese uses ã, õ, and ç. If you see "PARE" on a stop sign, it's likely Spanish-speaking South America (Brazil also uses PARE sometimes, but Portuguese has ç/ã).
+                </div>
+            </div>
+
+            <div class="lang-card">
+                <h3>Cyrillic Alphabet</h3>
+                <p>Used in Eastern Europe, the Balkans, and Central Asia. Unique letters are the key to telling countries apart.</p>
+                <ul>
+                    <li><b>Russian:</b> ы, э, ё. Used in Russia, Kazakhstan, Kyrgyzstan, and Belarus (alongside Belarusian).</li>
+                    <li><b>Ukrainian:</b> і, ї, є, ґ. Used in Ukraine.</li>
+                    <li><b>Belarusian:</b> ў (unique). Used in Belarus.</li>
+                    <li><b>Bulgarian:</b> ъ used as a normal vowel (e.g., България). Used in Bulgaria.</li>
+                    <li><b>Serbian:</b> ћ, ђ, ј, љ, њ, џ. Used in Serbia, Montenegro, Bosnia and Herzegovina.</li>
+                    <li><b>Macedonian:</b> ѓ, ќ, ѕ, ј, љ, њ, џ. Used in North Macedonia.</li>
+                    <li><b>Kazakh:</b> ә, ғ, қ, ң, ө, ұ, ү, һ, і. Used in Kazakhstan.</li>
+                    <li><b>Kyrgyz:</b> ң, ө, ү (without ә or ұ). Used in Kyrgyzstan.</li>
+                    <li><b>Mongolian:</b> ө, ү (without ң). Used in Mongolia.</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Russian vs Ukrainian:</b> Russian uses ы, э, ё. Ukrainian uses і, ї, є, ґ. If you see і (with a dot), it's not Russian.
+                </div>
+            </div>
+
+            <div class="lang-card">
+                <h3>Greek Alphabet</h3>
+                <p>Unique and easy to recognize. Letters like α, β, γ, δ, ε, λ, π, σ, ω are unmistakable.</p>
+                <ul>
+                    <li><b>Greek:</b> Used in Greece and Cyprus.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Asia -->
+        <section class="region-section">
+            <h2 class="region-title">Asia</h2>
+
+            <div class="lang-card">
+                <h3>East Asian Scripts</h3>
+                <ul>
+                    <li><b>Japanese:</b> A mix of Kanji (Chinese characters), Hiragana (curvy), and Katakana (angular). Used in Japan.</li>
+                    <li><b>Korean (Hangul):</b> Built from square-ish blocks with circles (ㅇ, ㅎ). Used in South Korea.</li>
+                    <li><b>Chinese:</b> Simplified characters used in Mainland China and Singapore. Traditional characters used in Taiwan, Hong Kong, and Macau. Mainland China has no Street View coverage.</li>
+                    <li><b>Vietnamese:</b> Latin alphabet with many tone marks and diacritics (đ, ă, â, ê, ô, ơ, ư). Used in Vietnam.</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Japanese vs Chinese:</b> If you see Hiragana (curvy) or Katakana (angular), it's Japan. If you only see dense, complex characters, it could be Chinese (Taiwan/Hong Kong) or Japanese Kanji. Korea is easy: look for circles in the blocks.
+                </div>
+            </div>
+
+            <div class="lang-card">
+                <h3>Southeast Asian Scripts</h3>
+                <ul>
+                    <li><b>Thai:</b> Curvy script with small loops and descending lines. Used in Thailand.</li>
+                    <li><b>Khmer:</b> Intricate, dense, and ornate. Used in Cambodia.</li>
+                    <li><b>Lao:</b> Similar to Thai but simpler. Used in Laos.</li>
+                    <li><b>Burmese:</b> Circular, rounded letters. Used in Myanmar (limited coverage).</li>
+                    <li><b>Indonesian/Malay:</b> Latin alphabet. Indonesian uses "ng", "ny", "ai", "au". Malay sometimes has Jawi (Arabic) script but mostly Latin. Used in Indonesia and Malaysia.</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Thai vs Lao vs Khmer:</b> Thai has small loops and a line at the top. Khmer is very dense and ornate (looks like little "among us" shapes). Lao is simpler than Thai.
+                </div>
+            </div>
+
+            <div class="lang-card">
+                <h3>South Asian Scripts</h3>
+                <ul>
+                    <li><b>Hindi:</b> Devanagari script, with a continuous line across the top (like a clothesline). Used in India.</li>
+                    <li><b>Bengali:</b> Similar continuous headline, but different character shapes. Used in Bangladesh and India (West Bengal).</li>
+                    <li><b>Sinhala:</b> Very rounded, circular shapes. Used in Sri Lanka.</li>
+                    <li><b>Tamil:</b> Angular, rounded forms. Used in Sri Lanka, India, and Singapore.</li>
+                    <li><b>Nepali:</b> Devanagari script (like Hindi). Used in Nepal.</li>
+                    <li><b>Dzongkha:</b> Tibetan script. Used in Bhutan.</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Hindi vs Bengali:</b> Both have a top line. Bengali characters look like squiggles with little circles. Hindi characters are more angular and "hanging".
+                </div>
+            </div>
+
+            <div class="lang-card">
+                <h3>Middle East & Central Asia</h3>
+                <ul>
+                    <li><b>Arabic:</b> Right-to-left, joined script with dots above/below. Used in UAE, Qatar, Oman, Jordan, Lebanon, Iraq, Saudi Arabia, Egypt, etc.</li>
+                    <li><b>Hebrew:</b> Square-ish letters, right-to-left. Used in Israel.</li>
+                    <li><b>Persian (Farsi):</b> Arabic script with extra letters (پ, چ, ژ, گ). Used in Iran (no coverage).</li>
+                    <li><b>Urdu:</b> Arabic script with extra letters (ٹ, ڈ, ڑ, ں, ے, ہ, ھ). Used in Pakistan.</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Arabic vs Persian/Urdu:</b> If you see پ, چ, ژ, گ, it's not Arabic (it's Persian, Urdu, or Pashto). Urdu has additional letters like ٹ and ں.
+                </div>
+            </div>
+        </section>
+
+        <!-- Africa -->
+        <section class="region-section">
+            <h2 class="region-title">Africa</h2>
+            <div class="lang-card">
+                <h3>Major Languages</h3>
+                <ul>
+                    <li><b>French:</b> Used in Senegal, Tunisia, Madagascar, and many West/Central African countries.</li>
+                    <li><b>English:</b> Used in Nigeria, Kenya, Ghana, South Africa, Uganda, Tanzania, Botswana, Eswatini, Lesotho, Malawi, Rwanda, Namibia.</li>
+                    <li><b>Portuguese:</b> Used in Angola, Mozambique, Cape Verde, Guinea-Bissau, São Tomé and Príncipe.</li>
+                    <li><b>Arabic:</b> Used in Egypt, Tunisia, and North Africa.</li>
+                    <li><b>Afrikaans:</b> Latin alphabet with unique words. Used in South Africa and Namibia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Americas -->
+        <section class="region-section">
+            <h2 class="region-title">Americas</h2>
+            <div class="lang-card">
+                <h3>North America & Caribbean</h3>
+                <ul>
+                    <li><b>English:</b> USA, Canada (except Quebec), and Caribbean nations.</li>
+                    <li><b>French:</b> Canada (Quebec), Haiti (alongside Creole).</li>
+                    <li><b>Spanish:</b> Mexico, Cuba, Dominican Republic, Puerto Rico, Costa Rica, Panama, Guatemala.</li>
+                    <li><b>Dutch:</b> Curaçao (alongside Papiamento), Aruba, Sint Maarten.</li>
+                </ul>
+            </div>
+
+            <div class="lang-card">
+                <h3>South America</h3>
+                <ul>
+                    <li><b>Spanish:</b> Argentina, Chile, Colombia, Peru, Ecuador, Bolivia, Uruguay, Paraguay, Venezuela.</li>
+                    <li><b>Portuguese:</b> Brazil.</li>
+                    <li><b>Guaraní:</b> Co-official in Paraguay.</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Spanish vs Portuguese:</b> Look for "PARE" (Spanish) vs "PARE" (Portuguese, but with ç/ã elsewhere). Portuguese uses ã, õ, ç; Spanish uses ñ, ¿, ¡.
+                </div>
+            </div>
+        </section>
+
+        <!-- Oceania -->
+        <section class="region-section">
+            <h2 class="region-title">Oceania</h2>
+            <div class="lang-card">
+                <h3>Languages</h3>
+                <ul>
+                    <li><b>English:</b> Australia, New Zealand, Fiji, Papua New Guinea, Vanuatu.</li>
+                    <li><b>Maori:</b> Co-official in New Zealand (Latin script with macrons: ā, ē, ī, ō, ū).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Nav -->
+        <nav class="nav">
+            <a class="btn" href="countries.html">Back</a>
+            <a class="btn primary" href="domains.html">Next: Domains</a>
+        </nav>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-credits">
+            <a href="https://misiori.github.io" target="_blank" class="font-misiori">misiori</a>
+   
+        </div>
+    </footer>
+
+    <script>
+        const splash = document.getElementById('splash');
+        const timer = setTimeout(() => { hideSplash(); }, 3000);
+
+        function hideSplash() {
+            splash.classList.add('hidden');
+            clearTimeout(timer);
+            document.removeEventListener('keydown', hideSplash);
+            splash.removeEventListener('click', hideSplash);
+        }
+
+        splash.addEventListener('click', hideSplash);
+        document.addEventListener('keydown', hideSplash);
+    </script>
+</body>
+</html>
