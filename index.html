@@ -181,7 +181,7 @@
         }
 
         .category-content.open {
-            max-height: 500px; /* Достаточно для списка */
+            max-height: 500px;
             border-top-color: var(--border-color);
         }
 
@@ -199,7 +199,8 @@
             border-bottom: none;
         }
 
-        .sub-item-btn {
+        /* Теперь это ссылки, а не кнопки */
+        .sub-item-link {
             display: block;
             width: 100%;
             text-align: left;
@@ -209,13 +210,24 @@
             padding: 1rem 1.5rem 1rem 2.5rem;
             font-family: 'Sora', sans-serif;
             font-size: 1rem;
+            text-decoration: none;
             cursor: pointer;
             transition: background 0.2s, color 0.2s;
         }
 
-        .sub-item-btn:hover {
+        .sub-item-link:hover {
             background-color: #2a2a2a;
             color: var(--accent-color);
+        }
+
+        .sub-item-link.coming-soon {
+            color: #888;
+            cursor: default;
+        }
+        
+        .sub-item-link.coming-soon:hover {
+            background-color: transparent;
+            color: #888;
         }
 
         /* --- Modal --- */
@@ -360,9 +372,9 @@
             </div>
             <div class="category-content">
                 <ul class="sub-list">
-                    <li><button class="sub-item-btn")"><a href="/hemisphere">1. Hemisphere</a></button></li>
-                    <li><button class="sub-item-btn" onclick="alert('Section in development')">2. Nature</button></li>
-                    <li><button class="sub-item-btn" onclick="alert('Section in development')">3. Signs</button></li>
+                    <li><a href="/hemisphere" class="sub-item-link">1. Hemisphere</a></li>
+                    <li><a href="/nature" class="sub-item-link">2. Nature</a></li>
+                    <li><a href="/signs" class="sub-item-link">3. Signs</a></li>
                 </ul>
             </div>
         </div>
@@ -375,12 +387,12 @@
             </div>
             <div class="category-content">
                 <ul class="sub-list">
-                    <li><button class="sub-item-btn" onclick="alert('Section in development')">1. List of countries on GeoGuessr</button></li>
-                    <li><button class="sub-item-btn" onclick="alert('Section in development')">2. Languages</button></li>
-                    <li><button class="sub-item-btn" onclick="alert('Section in development')">3. Domains</button></li>
-                    <li><button class="sub-item-btn" onclick="alert('Section in development')">4. Road Markings</button></li>
-                    <li><button class="sub-item-btn" onclick="alert('Section in development')">5. Bollards</button></li>
-                    <li><button class="sub-item-btn" onclick="alert('Section in development')">6. Poles</button></li>
+                    <li><a href="/countries" class="sub-item-link">1. List of countries on GeoGuessr</a></li>
+                    <li><a href="/languages" class="sub-item-link">2. Languages</a></li>
+                    <li><a href="/domains" class="sub-item-link">3. Domains</a></li>
+                    <li><a href="/road-markings" class="sub-item-link">4. Road Markings</a></li>
+                    <li><a href="/bollards" class="sub-item-link">5. Bollards</a></li>
+                    <li><a href="/poles" class="sub-item-link">6. Poles</a></li>
                 </ul>
             </div>
         </div>
@@ -393,7 +405,7 @@
             </div>
             <div class="category-content">
                 <ul class="sub-list">
-                    <li><button class="sub-item-btn" style="color: #888; cursor: default;">Coming soon...</button></li>
+                    <li><a href="#" class="sub-item-link coming-soon" onclick="event.preventDefault()">Coming soon...</a></li>
                 </ul>
             </div>
         </div>
@@ -432,10 +444,7 @@
 
         // Accordion logic
         function toggleCategory(headerElement) {
-            // Переключаем класс active у заголовка (для стрелочки)
             headerElement.classList.toggle('active');
-            
-            // Находим следующий элемент (контент) и переключаем класс open
             const content = headerElement.nextElementSibling;
             content.classList.toggle('open');
         }
