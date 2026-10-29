@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signs - GeoDocs</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #4a90e2;
+            --border-color: #333;
+            --card-bg: #1e1e1e;
+            --text-muted: #888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Splash Screen --- */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 2.5rem;
+            font-weight: 700;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            cursor: pointer;
+        }
+        #splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        #splash a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        #splash a:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: var(--text-color);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .logo:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .hero p {
+            color: var(--text-muted);
+            max-width: 60ch;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .content-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .content-section p {
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+        .content-section b {
+            color: var(--text-color);
+        }
+
+        /* --- IMAGE STYLES & LIGHTBOX --- */
+        .img-container {
+            width: 100%;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+        .img-container:hover .zone-image {
+            transform: scale(1.05);
+        }
+        .zone-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            overflow: hidden;
+        }
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease;
+            cursor: zoom-in;
+        }
+        .lightbox img.zoomed {
+            transform: scale(2.5);
+            cursor: zoom-out;
+        }
+        .close-lightbox {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+        .close-lightbox:hover {
+            color: var(--accent-color);
+        }
+
+        /* Exception list */
+        .exception-item {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .exception-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .exception-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        .exception-item p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        /* Nav */
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            margin: 40px 0 56px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        a.btn:hover {
+            background: #2a2a2a;
+            border-color: var(--text-muted);
+        }
+        .btn.primary {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+        a.btn.primary:hover {
+            background: #357abd;
+            border-color: #357abd;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .footer-credits a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-credits a:hover {
+            color: var(--text-color);
+        }
+
+        @media (max-width: 720px) {
+            .content-section { padding: 1.5rem; }
+            .close-lightbox { top: 10px; right: 20px; font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash">
+        <a href="https://misiori.github.io" target="_blank">misiori</a>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <span class="close-lightbox">&times;</span>
+        <img src="" alt="Zoomed View" id="lightbox-img">
+    </div>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="back-link">← Back</a>
+        <div class="logo">GeoDocs</div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="hero">
+            <h1>Signs: Stop Signs</h1>
+            <p>How to identify regions by their stop signs. Mostly standard, but with crucial exceptions.</p>
+        </div>
+
+        <!-- 1. Standard Stop Sign -->
+        <section class="content-section">
+            <h2>🛑 The Standard Stop Sign</h2>
+            <p>In most countries around the world, you will see the classic red octagon with white letters. This is the default; if you see it, you can usually rule out the countries listed in the exceptions below.</p>
+            <div class="img-container" onclick="openLightbox(this)">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyqOm6SK_1Lu7iN0nVUqyYuKr18BsK2VePG7OPoIXmike-BmVgcYl-KutSOCvisfqSltKKfR49AJZwnkA1PTFnttFf8LYLFJZKGFLzGswk&s=10" alt="Standard Stop Sign" class="zone-image">
+            </div>
+        </section>
+
+        <!-- 2. Exceptions -->
+        <section class="content-section">
+            <h2>❗ Exceptions</h2>
+            <p>These countries use a different design or have specific rules that break the global standard.</p>
+
+            <!-- Japan -->
+            <div class="exception-item">
+                <h3>1. Japan</h3>
+                <p>Uses a red inverted triangle with white Japanese text. However, you can sometimes find the standard road signs in some areas.</p>
+                <div class="img-container" onclick="openLightbox(this)">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/60/Japan_road_sign_330-A.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original" alt="Japan Stop Sign" class="zone-image">
+                </div>
+            </div>
+
+            <!-- South Korea -->
+            <div class="exception-item">
+                <h3>2. South Korea</h3>
+                <p>Also uses a red inverted triangle, but the text and layout differ from Japan.</p>
+                <div class="img-container" onclick="openLightbox(this)">
+                    <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRCuoVb0zq4rik6yYVPOWgWTg-7iopUi-SyljQGy5SMuSwAJi9h" alt="South Korea Stop Sign" class="zone-image">
+                </div>
+            </div>
+
+            <!-- Thailand -->
+            <div class="exception-item">
+                <h3>3. Thailand</h3>
+                <p>Standard red octagon, but the text is in Thai instead of English.</p>
+                <div class="img-container" onclick="openLightbox(this)">
+                    <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Thai_Stop_Sign.svg/960px-Thai_Stop_Sign.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail&_=20260925094525" alt="Thailand Stop Sign" class="zone-image">
+                </div>
+            </div>
+
+            <!-- Malaysia -->
+            <div class="exception-item">
+                <h3>4. Malaysia</h3>
+                <p>Similar red octagon, but with Malay text ("BERHENTI").</p>
+                <div class="img-container" onclick="openLightbox(this)">
+                    <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Malaysia_road_sign_RP1.svg/960px-Malaysia_road_sign_RP1.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail&_=20220731012358" alt="Malaysia Stop Sign" class="zone-image">
+                </div>
+            </div>
+
+            <!-- North American Spanish Speaking -->
+            <div class="exception-item">
+                <h3>5. North American Spanish Speaking Countries</h3>
+                <p>Mexico, Guatemala, etc. Often use a red octagon, but with "ALTO" instead of "STOP".</p>
+                <div class="img-container" onclick="openLightbox(this)">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSl1vG07I1hwYprNswXASjST8i2vU_VsUiOiwTZ2DIQPki-nJtHoh3lFSS2jZFJJm4gZ3yCP0_3DrrDeEYmXpDW1IplWRypZG-BIBC2W4a&s=10" alt="Spanish Stop Sign" class="zone-image">
+                </div>
+            </div>
+
+            <!-- South American -->
+            <div class="exception-item">
+                <h3>6. South American Countries</h3>
+                <p>Many South American countries (like Brazil, Argentina, Chile) use "PARE" or "PARADA" instead of "STOP".</p>
+                <div class="img-container" onclick="openLightbox(this)">
+                    <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSbJEzYFNkamEzE51KH2Is2UIAk_8VfAWlvmMkGO4VLBow0PPlk" alt="South American Stop Sign" class="zone-image">
+                </div>
+            </div>
+
+            <!-- Papua New Guinea -->
+            <div class="exception-item">
+                <h3>7. Papua New Guinea</h3>
+                <p>Uses a standard red octagon with "STOP" written in English, but the sign itself is a different shape (often a flattened or elongated version).</p>
+                <div class="img-container" onclick="openLightbox(this)">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnNbGnW_tLQZtiB1zt2cLDrUUhZ4EpKzzCYcV8j-4O6g&s" alt="Papua New Guinea Stop Sign" class="zone-image">
+                </div>
+            </div>
+
+            <!-- Nepal -->
+            <div class="exception-item">
+                <h3>8. Nepal</h3>
+                <p>The sign features the word "रोक्नुहोस्" (Roknuhos) in Devanagari script.</p>
+                <div class="img-container" onclick="openLightbox(this)">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0clWhRJ6bN-Ks69box_9xPrQuu-bvZc1VSK5GZmxjcw&s" alt="Nepal Stop Sign" class="zone-image">
+                </div>
+            </div>
+
+            <!-- Israel, Ethiopia, Pakistan -->
+            <div class="exception-item">
+                <h3>9. Israel, Ethiopia and Pakistan</h3>
+                <p>These countries use alternative designs, often with local languages or different shapes (like a circle with a red border).</p>
+                <div class="img-container" onclick="openLightbox(this)">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTey6ISGCGKMzz7TukO_vumfiuC2sFCGnVhXR4fRWphzA&s=10" alt="Israel/Ethiopia/Pakistan Stop Sign" class="zone-image">
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Nav -->
+        <nav class="nav">
+            <a class="btn" href="index.html">Back to levels</a>
+            <a class="btn primary" href="domains.html">Next: Domains</a>
+        </nav>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-credits">
+            <span>by <a href="https://misiori.github.io" target="_blank">misiori</a></span>
+        </div>
+    </footer>
+
+    <script>
+        // Логика для Splash Screen
+        const splash = document.getElementById('splash');
+        const timer = setTimeout(() => { hideSplash(); }, 3000);
+
+        function hideSplash() {
+            splash.classList.add('hidden');
+            clearTimeout(timer);
+            document.removeEventListener('keydown', hideSplash);
+            splash.removeEventListener('click', hideSplash);
+        }
+
+        splash.addEventListener('click', hideSplash);
+        document.addEventListener('keydown', hideSplash);
+
+        // Логика для Лайтбокса
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        function openLightbox(container) {
+            const img = container.querySelector('img');
+            if (!img) return;
+            
+            lightboxImg.src = img.src;
+            lightboxImg.classList.remove('zoomed');
+            lightbox.classList.add('active');
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        document.querySelector('.close-lightbox').addEventListener('click', () => {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        lightboxImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lightboxImg.classList.toggle('zoomed');
+        });
+    </script>
+</body>
+</html>
