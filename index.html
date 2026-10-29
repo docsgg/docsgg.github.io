@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>kodewt</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoDocs</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* reset & base */
+        /* Base settings */
+        :root {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #4a90e2;
+            --border-color: #333;
+            --card-bg: #1e1e1e;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,230 +27,418 @@
         }
 
         body {
-            background: #ffffff;
-            font-family: -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            font-weight: 400;
-            color: #111;
-            line-height: 1.5;
-            padding: 2rem 1.5rem;
+            font-family: 'Sora', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- Splash Screen --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .credits-container {
+            text-align: center;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .credits-title {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 2rem;
+        }
+
+        .credits-list {
+            list-style: none;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+        }
+
+        .credits-list li {
+            margin: 1rem 0;
+        }
+
+        .skip-btn {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.8rem 2rem;
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .skip-btn:hover {
+            background: var(--card-bg);
+            border-color: var(--accent-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
             align-items: center;
         }
 
-        .container {
-            max-width: 720px;
-            width: 100%;
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .logo:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 800px;
             margin: 0 auto;
+            padding: 3rem 2rem;
+            width: 100%;
         }
 
-        /* header */
-        .site-header {
-            text-align: center;
-            padding: 2.5rem 0 1.5rem 0;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 2.5rem;
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
         }
 
-        .site-header h1 {
-            font-size: 2.8rem;
-            font-weight: 300;
-            letter-spacing: -0.02em;
-            color: #111;
+        /* Accordion Structure */
+        .category-section {
+            margin-bottom: 1.5rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        .site-header h1 span {
-            font-weight: 400;
-            color: #222;
+        .category-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            transition: background 0.3s;
+            user-select: none;
         }
 
-        /* description */
-        .intro {
-            text-align: center;
-            font-size: 1.1rem;
-            color: #333;
-            max-width: 580px;
-            margin: 0 auto 2.8rem auto;
-            padding: 0 0.5rem;
-            line-height: 1.6;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 2.5rem;
+        .category-header:hover {
+            background-color: #2a2a2a;
         }
 
-        .intro p {
+        .category-header .arrow {
+            transition: transform 0.3s ease;
+            font-size: 1rem;
+            color: #888;
+        }
+
+        .category-header.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            border-top: 1px solid transparent;
+        }
+
+        .category-content.open {
+            max-height: 500px; /* Достаточно для списка */
+            border-top-color: var(--border-color);
+        }
+
+        .sub-list {
+            list-style: none;
+            padding: 0;
             margin: 0;
         }
 
-        .intro .emoji {
-            display: inline-block;
-            margin: 0 2px;
+        .sub-list li {
+            border-bottom: 1px solid var(--border-color);
         }
 
-        /* cards */
-        .projects {
-            display: flex;
-            flex-direction: column;
-            gap: 1.8rem;
-            margin-bottom: 3.5rem;
+        .sub-list li:last-child {
+            border-bottom: none;
         }
 
-        .project-card {
-            background: #fafafa;
-            border-radius: 20px;
-            padding: 1.8rem 2rem;
-            border: 1px solid #f0f0f0;
-            transition: background 0.15s ease, border-color 0.15s ease;
+        .sub-item-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            padding: 1rem 1.5rem 1rem 2.5rem;
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .sub-item-btn:hover {
+            background-color: #2a2a2a;
+            color: var(--accent-color);
+        }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+        }
+
+        .modal-content p {
+            margin-bottom: 1.5rem;
+            color: #aaa;
+        }
+
+        .close-btn {
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background-color: #357abd;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .footer-credits {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
             flex-wrap: wrap;
             align-items: center;
-            justify-content: space-between;
         }
 
-        .project-card:hover {
-            background: #f5f5f5;
-            border-color: #e0e0e0;
-        }
-
-        .project-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-
-        .project-name {
-            font-size: 1.5rem;
-            font-weight: 400;
-            letter-spacing: -0.01em;
-            color: #111;
-        }
-
-        .project-desc {
-            font-size: 0.95rem;
-            color: #666;
-        }
-
-        .project-link {
-            background: #111;
-            color: #fff;
+        .footer-credits a {
+            color: #888;
             text-decoration: none;
-            padding: 0.5rem 1.4rem;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 450;
-            letter-spacing: 0.3px;
-            transition: background 0.15s ease, transform 0.1s ease;
-            border: none;
-            white-space: nowrap;
-            margin-left: 1rem;
+            transition: color 0.3s;
         }
 
-        .project-link:hover {
-            background: #2a2a2a;
-            transform: scale(0.97);
+        .footer-credits a:hover {
+            color: var(--text-color);
         }
 
-        .project-link:active {
-            transform: scale(0.94);
+        .font-misiori {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            font-weight: 700;
         }
 
-        /* footer */
-        .site-footer {
-            text-align: center;
-            padding: 2rem 0 1rem 0;
-            border-top: 1px solid #f0f0f0;
-            color: #aaa;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-            margin-top: 0.5rem;
+        .font-misiori:hover {
+            color: var(--accent-color) !important;
         }
 
-        .site-footer span {
-            color: #ccc;
-        }
-
-        /* small screens */
-        @media (max-width: 500px) {
-            body {
-                padding: 1.2rem 1rem;
-            }
-
-            .site-header h1 {
-                font-size: 2.2rem;
-            }
-
-            .intro {
-                font-size: 1rem;
-                padding: 0 0.2rem 2rem 0.2rem;
-            }
-
-            .project-card {
+        /* --- Responsive --- */
+        @media (max-width: 600px) {
+            .footer-credits {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-                padding: 1.5rem;
-            }
-
-            .project-link {
-                margin-left: 0;
-                align-self: flex-start;
-                padding: 0.4rem 1.2rem;
-                font-size: 0.85rem;
-            }
-
-            .project-name {
-                font-size: 1.3rem;
+                gap: 0.5rem;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+    <!-- 1. Splash Screen -->
+    <div id="splash-screen">
+        <div class="credits-container">
+            <div class="credits-title">Created by</div>
+            <ul class="credits-list">
+                <li>misiori</li>
+                <li>heisentm</li>
+            </ul>
+            <button class="skip-btn" onclick="skipSplash()">Skip</button>
+        </div>
+    </div>
 
-    <!-- header -->
-    <header class="site-header">
-        <h1>kodewt</h1>
+    <!-- 2. Header -->
+    <header>
+        <div class="logo" onclick="openModal()">GeoDocs</div>
     </header>
 
-    <!-- description -->
-    <div class="intro">
-        <p>
-            hey! i’m an indie dev and i make smt on the web and creating levels in gd :)
-            <br />
-            my games are a bit buggy bcz it’s the first version, but i’ll fix it (mb).
-        </p>
+    <!-- Modal -->
+    <div class="modal-overlay" id="infoModal">
+        <div class="modal-content">
+            <h2>What is GeoDocs?</h2>
+            <p>GeoDocs is a comprehensive, structured guide to GeoGuessr. Here you will find meta-clues, country breakdowns, road signs, architecture, and advanced techniques to win in Duels and Battle Royale.</p>
+            <button class="close-btn" onclick="closeModal()">Got it</button>
+        </div>
     </div>
 
-    <!-- projects -->
-    <div class="projects">
-
-        <!-- colored squares -->
-        <div class="project-card">
-            <div class="project-info">
-                <div class="project-name">colored squares</div>
-                <div class="project-desc">drag &amp; swap puzzle</div>
+    <!-- 3. Main Content (Structure) -->
+    <main>
+        <h1 class="page-title">Guide Structure</h1>
+        
+        <!-- Category 1: Earth Regions -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleCategory(this)">
+                Earth Regions
+                <span class="arrow">▼</span>
             </div>
-            <a href="/cs" class="project-link">/cs</a>
+            <div class="category-content">
+                <ul class="sub-list">
+                    <li><button class="sub-item-btn" onclick="alert('Section in development')">1. Hemisphere</button></li>
+                    <li><button class="sub-item-btn" onclick="alert('Section in development')">2. Nature</button></li>
+                    <li><button class="sub-item-btn" onclick="alert('Section in development')">3. Signs</button></li>
+                </ul>
+            </div>
         </div>
 
-        <!-- the clicking game -->
-        <div class="project-card">
-            <div class="project-info">
-                <div class="project-name">the clicking game</div>
-                <div class="project-desc">click the smiley, get points</div>
+        <!-- Category 2: Earth Countries -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleCategory(this)">
+                Earth Countries
+                <span class="arrow">▼</span>
             </div>
-            <a href="/tcg" class="project-link">/tcg</a>
+            <div class="category-content">
+                <ul class="sub-list">
+                    <li><button class="sub-item-btn" onclick="alert('Section in development')">1. List of countries on GeoGuessr</button></li>
+                    <li><button class="sub-item-btn" onclick="alert('Section in development')">2. Languages</button></li>
+                    <li><button class="sub-item-btn" onclick="alert('Section in development')">3. Domains</button></li>
+                    <li><button class="sub-item-btn" onclick="alert('Section in development')">4. Road Markings</button></li>
+                    <li><button class="sub-item-btn" onclick="alert('Section in development')">5. Bollards</button></li>
+                    <li><button class="sub-item-btn" onclick="alert('Section in development')">6. Poles</button></li>
+                </ul>
+            </div>
         </div>
 
-    </div>
+        <!-- Category 3: Big Countries -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleCategory(this)">
+                Big Countries
+                <span class="arrow">▼</span>
+            </div>
+            <div class="category-content">
+                <ul class="sub-list">
+                    <li><button class="sub-item-btn" style="color: #888; cursor: default;">Coming soon...</button></li>
+                </ul>
+            </div>
+        </div>
 
-    <!-- footer -->
-    <footer class="site-footer">
-        <span>kodewt</span>
+    </main>
+
+    <!-- 4. Footer -->
+    <footer>
+        <div class="footer-credits">
+            <a href="https://misiori.github.io" target="_blank" class="font-misiori">misiori</a>
+            <a href="https://heisentm.github.io/geobasics/" target="_blank">heisentm</a>
+        </div>
     </footer>
 
-</div>
+    <script>
+        // Splash Screen logic
+        function skipSplash() {
+            const splash = document.getElementById('splash-screen');
+            splash.classList.add('hidden');
+        }
 
+        // Modal logic
+        function openModal() {
+            document.getElementById('infoModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('infoModal').classList.remove('active');
+        }
+
+        document.getElementById('infoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Accordion logic
+        function toggleCategory(headerElement) {
+            // Переключаем класс active у заголовка (для стрелочки)
+            headerElement.classList.toggle('active');
+            
+            // Находим следующий элемент (контент) и переключаем класс open
+            const content = headerElement.nextElementSibling;
+            content.classList.toggle('open');
+        }
+    </script>
 </body>
 </html>
