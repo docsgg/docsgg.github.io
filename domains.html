@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domains - GeoDocs</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #4a90e2;
+            --border-color: #333;
+            --card-bg: #1e1e1e;
+            --text-muted: #888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Splash Screen --- */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 2.5rem;
+            font-weight: 700;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            cursor: pointer;
+        }
+        #splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        #splash a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        #splash a:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: var(--text-color);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .logo:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .hero p {
+            color: var(--text-muted);
+            max-width: 70ch;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        /* Region Section */
+        .region-section {
+            margin-bottom: 3rem;
+        }
+        .region-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Domain Card */
+        .domain-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .domain-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        .domain-card p {
+            color: #ccc;
+            margin-bottom: 0.5rem;
+        }
+        .domain-card ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 0.5rem;
+        }
+        .domain-card ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .domain-card ul li::before {
+            content: "•";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        .domain-card b {
+            color: var(--text-color);
+        }
+
+        /* Comparison Box */
+        .compare-box {
+            background: #2a2a2a;
+            border-left: 4px solid var(--accent-color);
+            border-radius: 6px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+        .compare-box b {
+            color: var(--accent-color);
+        }
+
+        /* Nav */
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            margin: 40px 0 56px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        a.btn:hover {
+            background: #2a2a2a;
+            border-color: var(--text-muted);
+        }
+        .btn.primary {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+        a.btn.primary:hover {
+            background: #357abd;
+            border-color: #357abd;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .footer-credits {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .footer-credits a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-credits a:hover {
+            color: var(--text-color);
+        }
+        .font-misiori {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .font-misiori:hover {
+            color: var(--accent-color) !important;
+        }
+
+        @media (max-width: 720px) {
+            .domain-card { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash">
+        <a href="https://misiori.github.io" target="_blank">misiori</a>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="back-link">← Back</a>
+        <div class="logo">GeoDocs</div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="hero">
+            <h1>Domains</h1>
+            <p>How to use country-code top-level domains (ccTLDs) to confirm your location. Domains are one of the most reliable clues in GeoGuessr.</p>
+        </div>
+
+        <!-- Europe -->
+        <section class="region-section">
+            <h2 class="region-title">Europe</h2>
+
+            <div class="domain-card">
+                <h3>European Domains</h3>
+                <p>Most European countries use their two-letter ISO code as their ccTLD. Some have unique domains or use second-level domains.</p>
+                <ul>
+                    <li><b>Albania:</b> .al</li>
+                    <li><b>Andorra:</b> .ad</li>
+                    <li><b>Austria:</b> .at</li>
+                    <li><b>Belarus:</b> .by (Minsk only)</li>
+                    <li><b>Belgium:</b> .be</li>
+                    <li><b>Bosnia and Herzegovina:</b> .ba</li>
+                    <li><b>Bulgaria:</b> .bg</li>
+                    <li><b>Croatia:</b> .hr</li>
+                    <li><b>Czechia:</b> .cz</li>
+                    <li><b>Denmark:</b> .dk</li>
+                    <li><b>Estonia:</b> .ee</li>
+                    <li><b>Finland:</b> .fi</li>
+                    <li><b>France:</b> .fr</li>
+                    <li><b>Germany:</b> .de</li>
+                    <li><b>Gibraltar:</b> .gi</li>
+                    <li><b>Greece:</b> .gr</li>
+                    <li><b>Hungary:</b> .hu</li>
+                    <li><b>Iceland:</b> .is</li>
+                    <li><b>Ireland:</b> .ie</li>
+                    <li><b>Isle of Man:</b> .im</li>
+                    <li><b>Italy:</b> .it</li>
+                    <li><b>Jersey:</b> .je</li>
+                    <li><b>Latvia:</b> .lv</li>
+                    <li><b>Liechtenstein:</b> .li</li>
+                    <li><b>Lithuania:</b> .lt</li>
+                    <li><b>Luxembourg:</b> .lu</li>
+                    <li><b>Malta:</b> .mt</li>
+                    <li><b>Monaco:</b> .mc</li>
+                    <li><b>Montenegro:</b> .me</li>
+                    <li><b>Netherlands:</b> .nl</li>
+                    <li><b>North Macedonia:</b> .mk</li>
+                    <li><b>Norway:</b> .no</li>
+                    <li><b>Poland:</b> .pl</li>
+                    <li><b>Portugal:</b> .pt</li>
+                    <li><b>Romania:</b> .ro</li>
+                    <li><b>Russia:</b> .ru</li>
+                    <li><b>San Marino:</b> .sm</li>
+                    <li><b>Serbia:</b> .rs</li>
+                    <li><b>Slovakia:</b> .sk</li>
+                    <li><b>Slovenia:</b> .si</li>
+                    <li><b>Spain:</b> .es</li>
+                    <li><b>Sweden:</b> .se</li>
+                    <li><b>Switzerland:</b> .ch (or .swiss)</li>
+                    <li><b>Turkey:</b> .tr</li>
+                    <li><b>Ukraine:</b> .ua</li>
+                    <li><b>United Kingdom:</b> .uk (or .co.uk)</li>
+                    <li><b>Åland Islands:</b> .ax</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Important:</b> Switzerland uses <b>.ch</b> (Confoederatio Helvetica), not .swiss (though .swiss exists, .ch is far more common). Spain is <b>.es</b>, not .sp. United Kingdom uses <b>.uk</b> or <b>.co.uk</b>, not .gb.
+                </div>
+            </div>
+        </section>
+
+        <!-- Asia -->
+        <section class="region-section">
+            <h2 class="region-title">Asia</h2>
+
+            <div class="domain-card">
+                <h3>Asian Domains</h3>
+                <p>Asian ccTLDs are usually straightforward, but some have unique second-level domains or use different codes.</p>
+                <ul>
+                    <li><b>Bangladesh:</b> .bd</li>
+                    <li><b>Bhutan:</b> .bt</li>
+                    <li><b>Cambodia:</b> .kh</li>
+                    <li><b>Hong Kong:</b> .hk</li>
+                    <li><b>India:</b> .in</li>
+                    <li><b>Indonesia:</b> .id</li>
+                    <li><b>Iraq:</b> .iq (limited coverage)</li>
+                    <li><b>Israel:</b> .il</li>
+                    <li><b>Japan:</b> .jp</li>
+                    <li><b>Jordan:</b> .jo</li>
+                    <li><b>Kazakhstan:</b> .kz</li>
+                    <li><b>Kyrgyzstan:</b> .kg</li>
+                    <li><b>Laos:</b> .la</li>
+                    <li><b>Lebanon:</b> .lb</li>
+                    <li><b>Macau:</b> .mo</li>
+                    <li><b>Malaysia:</b> .my</li>
+                    <li><b>Mongolia:</b> .mn</li>
+                    <li><b>Nepal:</b> .np</li>
+                    <li><b>Oman:</b> .om</li>
+                    <li><b>Pakistan:</b> .pk</li>
+                    <li><b>Palestine:</b> .ps</li>
+                    <li><b>Philippines:</b> .ph</li>
+                    <li><b>Qatar:</b> .qa</li>
+                    <li><b>Singapore:</b> .sg</li>
+                    <li><b>South Korea:</b> .kr</li>
+                    <li><b>Sri Lanka:</b> .lk</li>
+                    <li><b>Taiwan:</b> .tw</li>
+                    <li><b>Thailand:</b> .th</li>
+                    <li><b>United Arab Emirates:</b> .ae</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Important:</b> Japan uses <b>.jp</b> (and .co.jp). South Korea uses <b>.kr</b> (and .co.kr). Taiwan uses <b>.tw</b>, not .cn. Hong Kong uses <b>.hk</b>, not .cn.
+                </div>
+            </div>
+        </section>
+
+        <!-- Africa -->
+        <section class="region-section">
+            <h2 class="region-title">Africa</h2>
+
+            <div class="domain-card">
+                <h3>African Domains</h3>
+                <p>African ccTLDs are often the two-letter ISO code. Some countries have limited coverage.</p>
+                <ul>
+                    <li><b>Botswana:</b> .bw</li>
+                    <li><b>Eswatini:</b> .sz</li>
+                    <li><b>Ghana:</b> .gh</li>
+                    <li><b>Kenya:</b> .ke</li>
+                    <li><b>Lesotho:</b> .ls</li>
+                    <li><b>Madagascar:</b> .mg</li>
+                    <li><b>Malawi:</b> .mw</li>
+                    <li><b>Mali:</b> .ml</li>
+                    <li><b>Namibia:</b> .na</li>
+                    <li><b>Nigeria:</b> .ng</li>
+                    <li><b>Rwanda:</b> .rw</li>
+                    <li><b>Senegal:</b> .sn</li>
+                    <li><b>South Africa:</b> .za</li>
+                    <li><b>Tanzania:</b> .tz</li>
+                    <li><b>Tunisia:</b> .tn</li>
+                    <li><b>Uganda:</b> .ug</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Important:</b> South Africa uses <b>.za</b> (Zuid-Afrika), not .sa (Saudi Arabia). Eswatini (formerly Swaziland) uses <b>.sz</b>.
+                </div>
+            </div>
+        </section>
+
+        <!-- North America & Caribbean -->
+        <section class="region-section">
+            <h2 class="region-title">North America & Caribbean</h2>
+
+            <div class="domain-card">
+                <h3>North American & Caribbean Domains</h3>
+                <ul>
+                    <li><b>Bermuda:</b> .bm</li>
+                    <li><b>Canada:</b> .ca</li>
+                    <li><b>Costa Rica:</b> .cr</li>
+                    <li><b>Cuba:</b> .cu</li>
+                    <li><b>Curaçao:</b> .cw</li>
+                    <li><b>Dominican Republic:</b> .do</li>
+                    <li><b>Guatemala:</b> .gt</li>
+                    <li><b>Martinique:</b> .mq</li>
+                    <li><b>Mexico:</b> .mx</li>
+                    <li><b>Panama:</b> .pa</li>
+                    <li><b>Puerto Rico:</b> .pr</li>
+                    <li><b>United States:</b> .us (or .com, .gov, .edu)</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Important:</b> The United States often uses <b>.com</b> or <b>.gov</b>, not just .us. Canada uses <b>.ca</b>, Mexico uses <b>.mx</b>.
+                </div>
+            </div>
+        </section>
+
+        <!-- South America -->
+        <section class="region-section">
+            <h2 class="region-title">South America</h2>
+
+            <div class="domain-card">
+                <h3>South American Domains</h3>
+                <ul>
+                    <li><b>Argentina:</b> .ar</li>
+                    <li><b>Bolivia:</b> .bo</li>
+                    <li><b>Brazil:</b> .br</li>
+                    <li><b>Chile:</b> .cl</li>
+                    <li><b>Colombia:</b> .co</li>
+                    <li><b>Ecuador:</b> .ec</li>
+                    <li><b>Peru:</b> .pe</li>
+                    <li><b>Uruguay:</b> .uy</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Important:</b> Brazil uses <b>.br</b> (and .com.br). Colombia uses <b>.co</b> (which can be confused with .com). Argentina uses <b>.ar</b>.
+                </div>
+            </div>
+        </section>
+
+        <!-- Oceania -->
+        <section class="region-section">
+            <h2 class="region-title">Oceania</h2>
+
+            <div class="domain-card">
+                <h3>Oceanian Domains</h3>
+                <ul>
+                    <li><b>Australia:</b> .au (and .com.au)</li>
+                    <li><b>New Zealand:</b> .nz (and .co.nz)</li>
+                    <li><b>Papua New Guinea:</b> .pg</li>
+                    <li><b>Pitcairn Islands:</b> .pn</li>
+                    <li><b>Vanuatu:</b> .vu</li>
+                </ul>
+                <div class="compare-box">
+                    <b>Important:</b> Australia uses <b>.au</b>, New Zealand uses <b>.nz</b>. Don't confuse .au with .at (Austria).
+                </div>
+            </div>
+        </section>
+
+        <!-- Nav -->
+        <nav class="nav">
+            <a class="btn" href="languages.html">Back</a>
+            <a class="btn primary" href="index.html">Nothing more yet!</a>
+        </nav>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-credits">
+            <a href="https://misiori.github.io" target="_blank" class="font-misiori">misiori</a>
+
+        </div>
+    </footer>
+
+    <script>
+        const splash = document.getElementById('splash');
+        const timer = setTimeout(() => { hideSplash(); }, 3000);
+
+        function hideSplash() {
+            splash.classList.add('hidden');
+            clearTimeout(timer);
+            document.removeEventListener('keydown', hideSplash);
+            splash.removeEventListener('click', hideSplash);
+        }
+
+        splash.addEventListener('click', hideSplash);
+        document.addEventListener('keydown', hideSplash);
+    </script>
+</body>
+</html>
