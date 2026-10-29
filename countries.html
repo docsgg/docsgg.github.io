@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countries - GeoDocs</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #4a90e2;
+            --border-color: #333;
+            --card-bg: #1e1e1e;
+            --text-muted: #888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Splash Screen --- */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 2.5rem;
+            font-weight: 700;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            cursor: pointer;
+        }
+        #splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        #splash a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        #splash a:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: var(--text-color);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .logo:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .hero p {
+            color: var(--text-muted);
+            max-width: 60ch;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        /* Region Section */
+        .region-section {
+            margin-bottom: 3rem;
+        }
+        .region-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Country Grid */
+        .country-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .country-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px 8px 8px;
+            border-radius: 10px;
+            transition: border-color 0.2s, background 0.2s;
+            cursor: default;
+        }
+        .country-card:hover {
+            border-color: var(--accent-color);
+            background-color: #2a2a2a;
+        }
+
+        .flag {
+            width: 28px;
+            height: 18px;
+            object-fit: cover;
+            border-radius: 3px;
+            border: 1px solid #444;
+            background-color: #333; /* fallback */
+        }
+
+        .country-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        /* Nav */
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            margin: 40px 0 56px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        a.btn:hover {
+            background: #2a2a2a;
+            border-color: var(--text-muted);
+        }
+        .btn.primary {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+        a.btn.primary:hover {
+            background: #357abd;
+            border-color: #357abd;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .footer-credits {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .footer-credits a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-credits a:hover {
+            color: var(--text-color);
+        }
+        .font-misiori {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .font-misiori:hover {
+            color: var(--accent-color) !important;
+        }
+
+        @media (max-width: 720px) {
+            .country-grid { gap: 8px; }
+            .country-card { padding: 6px 12px 6px 6px; }
+            .country-name { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash">
+        <a href="https://misiori.github.io" target="_blank">misiori</a>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="back-link">← Back</a>
+        <div class="logo">GeoDocs</div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="hero">
+            <h1>Countries on GeoGuessr</h1>
+            <p>All countries and territories with official Google Street View coverage, grouped by region. Flags indicate the country's location.</p>
+        </div>
+
+        <!-- Europe -->
+        <section class="region-section">
+            <h2 class="region-title">Europe</h2>
+            <div class="country-grid">
+                <div class="country-card"><img src="https://flagcdn.com/w40/al.png" alt="Albania" class="flag"><span class="country-name">Albania</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ad.png" alt="Andorra" class="flag"><span class="country-name">Andorra</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/at.png" alt="Austria" class="flag"><span class="country-name">Austria</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/by.png" alt="Belarus" class="flag"><span class="country-name">Belarus</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/be.png" alt="Belgium" class="flag"><span class="country-name">Belgium</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ba.png" alt="Bosnia and Herzegovina" class="flag"><span class="country-name">Bosnia & Herzegovina</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/bg.png" alt="Bulgaria" class="flag"><span class="country-name">Bulgaria</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/hr.png" alt="Croatia" class="flag"><span class="country-name">Croatia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/cz.png" alt="Czechia" class="flag"><span class="country-name">Czechia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/dk.png" alt="Denmark" class="flag"><span class="country-name">Denmark</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ee.png" alt="Estonia" class="flag"><span class="country-name">Estonia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/fi.png" alt="Finland" class="flag"><span class="country-name">Finland</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/fr.png" alt="France" class="flag"><span class="country-name">France</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/de.png" alt="Germany" class="flag"><span class="country-name">Germany</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/gi.png" alt="Gibraltar" class="flag"><span class="country-name">Gibraltar</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/gr.png" alt="Greece" class="flag"><span class="country-name">Greece</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/hu.png" alt="Hungary" class="flag"><span class="country-name">Hungary</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/is.png" alt="Iceland" class="flag"><span class="country-name">Iceland</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ie.png" alt="Ireland" class="flag"><span class="country-name">Ireland</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/im.png" alt="Isle of Man" class="flag"><span class="country-name">Isle of Man</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/it.png" alt="Italy" class="flag"><span class="country-name">Italy</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/je.png" alt="Jersey" class="flag"><span class="country-name">Jersey</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/lv.png" alt="Latvia" class="flag"><span class="country-name">Latvia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/li.png" alt="Liechtenstein" class="flag"><span class="country-name">Liechtenstein</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/lt.png" alt="Lithuania" class="flag"><span class="country-name">Lithuania</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/lu.png" alt="Luxembourg" class="flag"><span class="country-name">Luxembourg</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mt.png" alt="Malta" class="flag"><span class="country-name">Malta</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mc.png" alt="Monaco" class="flag"><span class="country-name">Monaco</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/me.png" alt="Montenegro" class="flag"><span class="country-name">Montenegro</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/nl.png" alt="Netherlands" class="flag"><span class="country-name">Netherlands</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mk.png" alt="North Macedonia" class="flag"><span class="country-name">North Macedonia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/no.png" alt="Norway" class="flag"><span class="country-name">Norway</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/pl.png" alt="Poland" class="flag"><span class="country-name">Poland</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/pt.png" alt="Portugal" class="flag"><span class="country-name">Portugal</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ro.png" alt="Romania" class="flag"><span class="country-name">Romania</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ru.png" alt="Russia" class="flag"><span class="country-name">Russia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/sm.png" alt="San Marino" class="flag"><span class="country-name">San Marino</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/rs.png" alt="Serbia" class="flag"><span class="country-name">Serbia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/sk.png" alt="Slovakia" class="flag"><span class="country-name">Slovakia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/si.png" alt="Slovenia" class="flag"><span class="country-name">Slovenia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/es.png" alt="Spain" class="flag"><span class="country-name">Spain</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/se.png" alt="Sweden" class="flag"><span class="country-name">Sweden</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ch.png" alt="Switzerland" class="flag"><span class="country-name">Switzerland</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/tr.png" alt="Turkey" class="flag"><span class="country-name">Turkey</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ua.png" alt="Ukraine" class="flag"><span class="country-name">Ukraine</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/gb.png" alt="United Kingdom" class="flag"><span class="country-name">United Kingdom</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ax.png" alt="Åland Islands" class="flag"><span class="country-name">Åland Islands</span></div>
+            </div>
+        </section>
+
+        <!-- Asia -->
+        <section class="region-section">
+            <h2 class="region-title">Asia</h2>
+            <div class="country-grid">
+                <div class="country-card"><img src="https://flagcdn.com/w40/bd.png" alt="Bangladesh" class="flag"><span class="country-name">Bangladesh</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/bt.png" alt="Bhutan" class="flag"><span class="country-name">Bhutan</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/kh.png" alt="Cambodia" class="flag"><span class="country-name">Cambodia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/cn.png" alt="China" class="flag"><span class="country-name">China</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/hk.png" alt="Hong Kong" class="flag"><span class="country-name">Hong Kong</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/in.png" alt="India" class="flag"><span class="country-name">India</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/id.png" alt="Indonesia" class="flag"><span class="country-name">Indonesia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/iq.png" alt="Iraq" class="flag"><span class="country-name">Iraq</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/il.png" alt="Israel" class="flag"><span class="country-name">Israel</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/jp.png" alt="Japan" class="flag"><span class="country-name">Japan</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/jo.png" alt="Jordan" class="flag"><span class="country-name">Jordan</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/kz.png" alt="Kazakhstan" class="flag"><span class="country-name">Kazakhstan</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/kg.png" alt="Kyrgyzstan" class="flag"><span class="country-name">Kyrgyzstan</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/la.png" alt="Laos" class="flag"><span class="country-name">Laos</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/lb.png" alt="Lebanon" class="flag"><span class="country-name">Lebanon</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mo.png" alt="Macau" class="flag"><span class="country-name">Macau</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/my.png" alt="Malaysia" class="flag"><span class="country-name">Malaysia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mn.png" alt="Mongolia" class="flag"><span class="country-name">Mongolia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/np.png" alt="Nepal" class="flag"><span class="country-name">Nepal</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/om.png" alt="Oman" class="flag"><span class="country-name">Oman</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/pk.png" alt="Pakistan" class="flag"><span class="country-name">Pakistan</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ps.png" alt="Palestine" class="flag"><span class="country-name">Palestine</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ph.png" alt="Philippines" class="flag"><span class="country-name">Philippines</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/qa.png" alt="Qatar" class="flag"><span class="country-name">Qatar</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/sg.png" alt="Singapore" class="flag"><span class="country-name">Singapore</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/kr.png" alt="South Korea" class="flag"><span class="country-name">South Korea</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/lk.png" alt="Sri Lanka" class="flag"><span class="country-name">Sri Lanka</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/tw.png" alt="Taiwan" class="flag"><span class="country-name">Taiwan</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/th.png" alt="Thailand" class="flag"><span class="country-name">Thailand</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ae.png" alt="United Arab Emirates" class="flag"><span class="country-name">United Arab Emirates</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/vn.png" alt="Vietnam" class="flag"><span class="country-name">Vietnam</span></div>
+            </div>
+        </section>
+
+        <!-- Africa -->
+        <section class="region-section">
+            <h2 class="region-title">Africa</h2>
+            <div class="country-grid">
+                <div class="country-card"><img src="https://flagcdn.com/w40/bw.png" alt="Botswana" class="flag"><span class="country-name">Botswana</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/eg.png" alt="Egypt" class="flag"><span class="country-name">Egypt</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/sz.png" alt="Eswatini" class="flag"><span class="country-name">Eswatini</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/gh.png" alt="Ghana" class="flag"><span class="country-name">Ghana</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ke.png" alt="Kenya" class="flag"><span class="country-name">Kenya</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ls.png" alt="Lesotho" class="flag"><span class="country-name">Lesotho</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mg.png" alt="Madagascar" class="flag"><span class="country-name">Madagascar</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mw.png" alt="Malawi" class="flag"><span class="country-name">Malawi</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mli.png" alt="Mali" class="flag"><span class="country-name">Mali</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/na.png" alt="Namibia" class="flag"><span class="country-name">Namibia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ng.png" alt="Nigeria" class="flag"><span class="country-name">Nigeria</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/rw.png" alt="Rwanda" class="flag"><span class="country-name">Rwanda</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/sn.png" alt="Senegal" class="flag"><span class="country-name">Senegal</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/za.png" alt="South Africa" class="flag"><span class="country-name">South Africa</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/tz.png" alt="Tanzania" class="flag"><span class="country-name">Tanzania</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/tn.png" alt="Tunisia" class="flag"><span class="country-name">Tunisia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ug.png" alt="Uganda" class="flag"><span class="country-name">Uganda</span></div>
+            </div>
+        </section>
+
+        <!-- North America -->
+        <section class="region-section">
+            <h2 class="region-title">North America & Caribbean</h2>
+            <div class="country-grid">
+                <div class="country-card"><img src="https://flagcdn.com/w40/ca.png" alt="Canada" class="flag"><span class="country-name">Canada</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/cr.png" alt="Costa Rica" class="flag"><span class="country-name">Costa Rica</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/cu.png" alt="Cuba" class="flag"><span class="country-name">Cuba</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/cw.png" alt="Curaçao" class="flag"><span class="country-name">Curaçao</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/do.png" alt="Dominican Republic" class="flag"><span class="country-name">Dominican Republic</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/gt.png" alt="Guatemala" class="flag"><span class="country-name">Guatemala</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mx.png" alt="Mexico" class="flag"><span class="country-name">Mexico</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/pa.png" alt="Panama" class="flag"><span class="country-name">Panama</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/pr.png" alt="Puerto Rico" class="flag"><span class="country-name">Puerto Rico</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/us.png" alt="United States" class="flag"><span class="country-name">United States</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/bm.png" alt="Bermuda" class="flag"><span class="country-name">Bermuda</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/mq.png" alt="Martinique" class="flag"><span class="country-name">Martinique</span></div>
+            </div>
+        </section>
+
+        <!-- South America -->
+        <section class="region-section">
+            <h2 class="region-title">South America</h2>
+            <div class="country-grid">
+                <div class="country-card"><img src="https://flagcdn.com/w40/ar.png" alt="Argentina" class="flag"><span class="country-name">Argentina</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/bo.png" alt="Bolivia" class="flag"><span class="country-name">Bolivia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/br.png" alt="Brazil" class="flag"><span class="country-name">Brazil</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/cl.png" alt="Chile" class="flag"><span class="country-name">Chile</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/co.png" alt="Colombia" class="flag"><span class="country-name">Colombia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/ec.png" alt="Ecuador" class="flag"><span class="country-name">Ecuador</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/pe.png" alt="Peru" class="flag"><span class="country-name">Peru</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/uy.png" alt="Uruguay" class="flag"><span class="country-name">Uruguay</span></div>
+            </div>
+        </section>
+
+        <!-- Oceania -->
+        <section class="region-section">
+            <h2 class="region-title">Oceania</h2>
+            <div class="country-grid">
+                <div class="country-card"><img src="https://flagcdn.com/w40/au.png" alt="Australia" class="flag"><span class="country-name">Australia</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/nz.png" alt="New Zealand" class="flag"><span class="country-name">New Zealand</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/pg.png" alt="Papua New Guinea" class="flag"><span class="country-name">Papua New Guinea</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/pn.png" alt="Pitcairn Islands" class="flag"><span class="country-name">Pitcairn Islands</span></div>
+                <div class="country-card"><img src="https://flagcdn.com/w40/vu.png" alt="Vanuatu" class="flag"><span class="country-name">Vanuatu</span></div>
+            </div>
+        </section>
+
+        <!-- Nav -->
+        <nav class="nav">
+            <a class="btn" href="signs.html">Back</a>
+            <a class="btn primary" href="lang.html">Next: Languages</a>
+        </nav>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-credits">
+            <a href="https://misiori.github.io" target="_blank" class="font-misiori">misiori</a>
+        </div>
+    </footer>
+
+    <script>
+        const splash = document.getElementById('splash');
+        const timer = setTimeout(() => { hideSplash(); }, 3000);
+
+        function hideSplash() {
+            splash.classList.add('hidden');
+            clearTimeout(timer);
+            document.removeEventListener('keydown', hideSplash);
+            splash.removeEventListener('click', hideSplash);
+        }
+
+        splash.addEventListener('click', hideSplash);
+        document.addEventListener('keydown', hideSplash);
+    </script>
+</body>
+</html>
