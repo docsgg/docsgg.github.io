@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - GeoDocs</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #4a90e2;
+            --border-color: #333;
+            --card-bg: #1e1e1e;
+            --text-muted: #888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: var(--text-color);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .logo:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .hero p {
+            color: var(--text-muted);
+            max-width: 70ch;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .content-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .content-section p {
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+        .content-section ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 0.5rem;
+        }
+        .content-section ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.6rem;
+            color: #ccc;
+        }
+        .content-section ul li::before {
+            content: "•";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        .content-section b {
+            color: var(--text-color);
+        }
+
+        /* Team Sections */
+        .team-category-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 1rem;
+        }
+        .team-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .team-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+        .team-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-color);
+        }
+        .team-card .role {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .team-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+        .team-link {
+            display: inline-block;
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .team-link:hover {
+            color: #fff;
+        }
+
+        /* Nav */
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            margin: 40px 0 56px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        a.btn:hover {
+            background: #2a2a2a;
+            border-color: var(--text-muted);
+        }
+        .btn.primary {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+        a.btn.primary:hover {
+            background: #357abd;
+            border-color: #357abd;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .footer-credits {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .footer-credits a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-credits a:hover {
+            color: var(--text-color);
+        }
+        .font-misiori {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .font-misiori:hover {
+            color: var(--accent-color) !important;
+        }
+
+        @media (max-width: 720px) {
+            .content-section { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="back-link">← Back</a>
+        <div class="logo">GeoDocs</div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="hero">
+            <h1>About GeoDocs</h1>
+            <p>A community-driven, structured guide to help you master GeoGuessr — from basic meta to advanced regionguessing.</p>
+        </div>
+
+        <!-- What is GeoDocs -->
+        <section class="content-section">
+            <h2>📖 What is GeoDocs?</h2>
+            <p>GeoDocs is an open, collaborative project created by players for players. We collect, organize, and explain the most useful clues, metas, and strategies used in GeoGuessr — covering everything from country identification by road markings and architecture to climate zones and domain names.</p>
+            <p>Our goal is to make learning GeoGuessr easier, more structured, and more fun. Whether you're a beginner trying to tell countries apart or a seasoned dueler looking for advanced regionguessing tips, GeoDocs has something for you.</p>
+            <ul>
+                <li><b>Structured:</b> Content is organized by regions and categories.</li>
+                <li><b>Community-driven:</b> Written and maintained by experienced players.</li>
+                <li><b>Practical:</b> Focused on real, usable clues you can apply in-game.</li>
+                <li><b>Free:</b> Accessible to everyone, no paywalls.</li>
+            </ul>
+        </section>
+
+        <!-- The Team -->
+        <section class="content-section">
+            <h2>👥 The Team</h2>
+            
+            <div class="team-category-title">Heads</div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <h3>misiori</h3>
+                    <div class="role">Founder, Developer & Compiler</div>
+                    <p>Created GeoDocs, built the platform, and compiled many of the guides.</p>
+                    <a href="https://misiori.github.io" target="_blank" class="team-link">misiori.github.io →</a>
+                </div>
+            </div>
+
+            <div class="team-category-title">Contributors</div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <h3>heisentm</h3>
+                    <p>Creator of GeoBasics. Helps with meta analysis, level design, and educational content.</p>
+                    <a href="https://heisentm.github.io/geobasics/" target="_blank" class="team-link">GeoBasics →</a>
+                </div>
+                <div class="team-card">
+                    <h3>everop</h3>
+                    <p>Authored the Curaçao regionguessing guide and provides valuable Caribbean meta.</p>
+                    <a href="https://docs.google.com/document/d/17n5k8CL-jR_MeIpb6QmeaJJY_K-KkGSror_VnrbStWU/edit?tab=t.0" target="_blank" class="team-link">Curaçao Guide →</a>
+                </div>
+                <div class="team-card">
+                    <h3>Cleveland Brown Jr.</h3>
+                    <p>Author of the upcoming Vietnam guide, which will be available on the platform soon.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How to contribute -->
+        <section class="content-section">
+            <h2>🤝 How to Contribute</h2>
+            <p>We would be really thankful if you'd contribute! To submit a guide or any meta clues, feel free to contact <a href="https://misiori.github.io/#socials" >misiori</a> on his Discord or any other social media. You can:</p>
+            <ul>
+                <li>Submit a guide or meta you've written.</li>
+                <li>Suggest corrections or improvements.</li>
+                <li>Help translate content into other languages.</li>
+                <li>Share GeoDocs with other players.</li>
+            </ul>
+        </section>
+
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-credits">
+            <a href="https://misiori.github.io" target="_blank" class="font-misiori">misiori</a>
+            <a href="https://heisentm.github.io/geobasics/" target="_blank">heisentm</a>
+            <a href="https://docs.google.com/document/d/17n5k8CL-jR_MeIpb6QmeaJJY_K-KkGSror_VnrbStWU/edit?tab=t.0" target="_blank">everop</a>
+            <span>potatozes</span>
+        </div>
+    </footer>
+</body>
+</html>
