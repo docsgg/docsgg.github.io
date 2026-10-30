@@ -51,6 +51,7 @@
             align-items: center;
             z-index: 9999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
+            cursor: pointer;
         }
 
         #splash-screen.hidden {
@@ -82,23 +83,6 @@
             margin: 1rem 0;
         }
 
-        .skip-btn {
-            background: transparent;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 0.8rem 2rem;
-            font-family: 'Sora', sans-serif;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: background 0.3s, border-color 0.3s;
-        }
-
-        .skip-btn:hover {
-            background: var(--card-bg);
-            border-color: var(--accent-color);
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -110,6 +94,7 @@
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
 
         .logo {
@@ -123,6 +108,26 @@
             color: var(--accent-color);
         }
 
+        .info-icon {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 700;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info-icon:hover {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
         /* --- Main Content --- */
         main {
             flex: 1;
@@ -132,10 +137,35 @@
             width: 100%;
         }
 
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
         .page-title {
             font-size: 2rem;
-            margin-bottom: 2rem;
             font-weight: 600;
+        }
+
+        .roadmap-btn {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: 'Sora', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .roadmap-btn:hover {
+            background: #2a2a2a;
+            border-color: var(--accent-color);
         }
 
         /* Accordion Structure */
@@ -199,7 +229,6 @@
             border-bottom: none;
         }
 
-        /* Теперь это ссылки, а не кнопки */
         .sub-item-link {
             display: block;
             width: 100%;
@@ -230,7 +259,7 @@
             color: #888;
         }
 
-        /* --- Modal --- */
+        /* --- Modals --- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -257,7 +286,7 @@
             padding: 2rem;
             border-radius: 12px;
             max-width: 500px;
-            text-align: center;
+            text-align: left;
             border: 1px solid var(--border-color);
         }
 
@@ -266,8 +295,28 @@
         }
 
         .modal-content p {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             color: #aaa;
+        }
+
+        .modal-content ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content ul li {
+            color: #aaa;
+            margin-bottom: 0.5rem;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+
+        .modal-content ul li::before {
+            content: "•";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
         }
 
         .close-btn {
@@ -329,41 +378,68 @@
                 flex-direction: column;
                 gap: 0.5rem;
             }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body>
 
     <!-- 1. Splash Screen -->
-    <div id="splash-screen">
+    <div id="splash-screen" onclick="skipSplash()">
         <div class="credits-container">
             <div class="credits-title">Created by</div>
             <ul class="credits-list">
                 <li>misiori</li>
                 <li>heisentm</li>
                 <li>everop</li>
+                <li>Cleveland Brown Jr.</li>
             </ul>
-            <button class="skip-btn" onclick="skipSplash()">Skip</button>
         </div>
     </div>
 
     <!-- 2. Header -->
     <header>
-        <div class="logo" onclick="openModal()">GeoDocs</div>
+        <div class="logo" onclick="openModal('infoModal')">GeoDocs</div>
+        <!-- Иконка info ведет на страницу /about -->
+        <a href="/about" class="info-icon" title="About GeoDocs">i</a>
     </header>
 
-    <!-- Modal -->
+    <!-- Info Modal (открывается по клику на логотип) -->
     <div class="modal-overlay" id="infoModal">
         <div class="modal-content">
             <h2>What is GeoDocs?</h2>
             <p>GeoDocs is a comprehensive, structured guide to GeoGuessr. Here you will find meta-clues, country breakdowns, road signs, architecture, and advanced techniques to win in Duels and Battle Royale.</p>
-            <button class="close-btn" onclick="closeModal()">Got it</button>
+            <button class="close-btn" onclick="closeModal('infoModal')">Got it</button>
+        </div>
+    </div>
+
+    <!-- Roadmap Modal -->
+    <div class="modal-overlay" id="roadmapModal">
+        <div class="modal-content">
+            <h2>Roadmap</h2>
+            <p><b>Version 1.01</b></p>
+            <ul>
+                <li>About page added</li>
+                <li>New contributor (Cleveland Brown Jr.)</li>
+            </ul>
+            <p><b>Version 1.0</b></p>
+            <ul>
+                <li>GeoDocs released!</li>
+            </ul>
+            <button class="close-btn" onclick="closeModal('roadmapModal')">Close</button>
         </div>
     </div>
 
     <!-- 3. Main Content (Structure) -->
     <main>
-        <h1 class="page-title">Guide Structure</h1>
+        <!-- Заголовок + кнопка Roadmap -->
+        <div class="page-header">
+            <h1 class="page-title">Guide Structure</h1>
+            <button class="roadmap-btn" onclick="openModal('roadmapModal')">Roadmap</button>
+        </div>
         
         <!-- Category 1: Earth Regions -->
         <div class="category-section">
@@ -398,7 +474,7 @@
             </div>
         </div>
 
-        <!-- Category 3: Big Countries -->
+        <!-- Category 3: Country Guides -->
         <div class="category-section">
             <div class="category-header" onclick="toggleCategory(this)">
                 Country Guides
@@ -406,7 +482,8 @@
             </div>
             <div class="category-content">
                 <ul class="sub-list">
-                     <li><a href="https://docs.google.com/document/d/17n5k8CL-jR_MeIpb6QmeaJJY_K-KkGSror_VnrbStWU/edit?tab=t.0" class="sub-item-link">1. The Curacao Guide by Everop</a></li>
+                     <li><a href="https://docs.google.com/document/d/17n5k8CL-jR_MeIpb6QmeaJJY_K-KkGSror_VnrbStWU/edit?tab=t.0" target="_blank" class="sub-item-link">1. The Curaçao Guide by Everop</a></li>
+                     <li><a href="#" class="sub-item-link coming-soon" onclick="event.preventDefault()">2. Vietnam Guide by Cleveland Brown Jr. (Coming soon)</a></li>
                 </ul>
             </div>
         </div>
@@ -418,30 +495,40 @@
         <div class="footer-credits">
             <a href="https://misiori.github.io" target="_blank" class="font-misiori">misiori</a>
             <a href="https://heisentm.github.io/geobasics/" target="_blank">heisentm</a>
-            <a href = "https://docs.google.com/document/d/17n5k8CL-jR_MeIpb6QmeaJJY_K-KkGSror_VnrbStWU/edit?tab=t.0" target="_blank">everop</a>
+            <a href="https://docs.google.com/document/d/17n5k8CL-jR_MeIpb6QmeaJJY_K-KkGSror_VnrbStWU/edit?tab=t.0" target="_blank">everop</a>
+            <span>potatozes</span>
         </div>
     </footer>
 
     <script>
-        // Splash Screen logic
+        // Splash Screen: авто-скрытие через 1.5 секунды
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) splash.classList.add('hidden');
+        }, 1500);
+
+        // Функция принудительного скрытия по клику
         function skipSplash() {
             const splash = document.getElementById('splash-screen');
-            splash.classList.add('hidden');
+            if (splash) splash.classList.add('hidden');
         }
 
-        // Modal logic
-        function openModal() {
-            document.getElementById('infoModal').classList.add('active');
+        // Универсальная логика для модалок
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
         }
 
-        function closeModal() {
-            document.getElementById('infoModal').classList.remove('active');
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
         }
 
-        document.getElementById('infoModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
+        // Закрытие модалки по клику на фон
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
         });
 
         // Accordion logic
