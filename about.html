@@ -15,6 +15,7 @@
             --bg-color: #121212;
             --text-color: #e0e0e0;
             --accent-color: #4a90e2;
+            --accent-hover: #6aa9f0;
             --border-color: #333;
             --card-bg: #1e1e1e;
             --text-muted: #888;
@@ -47,11 +48,16 @@
         .back-link {
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 1.2rem;
-            transition: color 0.3s;
+            font-size: 1rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: color 0.3s, border-color 0.3s, background 0.3s;
         }
         .back-link:hover {
             color: var(--text-color);
+            border-color: var(--border-color);
+            background: var(--card-bg);
         }
         .logo {
             font-size: 1.5rem;
@@ -129,6 +135,23 @@
             color: var(--text-color);
         }
 
+        /* --- Красивые inline-ссылки в тексте --- */
+        .text-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 1px;
+            border-bottom: 1px solid rgba(74, 144, 226, 0.35);
+            transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+            border-radius: 3px;
+        }
+        .text-link:hover {
+            color: var(--accent-hover);
+            border-bottom-color: var(--accent-hover);
+            background: rgba(74, 144, 226, 0.08);
+        }
+
         /* Team Sections */
         .team-category-title {
             font-size: 1.2rem;
@@ -151,6 +174,8 @@
             border-radius: 12px;
             padding: 1.5rem;
             transition: border-color 0.2s, transform 0.2s;
+            display: flex;
+            flex-direction: column;
         }
         .team-card:hover {
             border-color: var(--accent-color);
@@ -172,18 +197,38 @@
         .team-card p {
             font-size: 0.95rem;
             color: var(--text-muted);
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
         }
+
+        /* --- Красивые ссылки-кнопки в карточках --- */
         .team-link {
-            display: inline-block;
-            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: auto;
+            align-self: flex-start;
+            font-size: 0.85rem;
             color: var(--accent-color);
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.2s;
+            padding: 6px 12px;
+            border: 1px solid rgba(74, 144, 226, 0.35);
+            border-radius: 8px;
+            background: rgba(74, 144, 226, 0.06);
+            transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
+        }
+        .team-link::after {
+            content: "→";
+            font-size: 0.9rem;
+            transition: transform 0.25s ease;
         }
         .team-link:hover {
             color: #fff;
+            background: rgba(74, 144, 226, 0.22);
+            border-color: var(--accent-color);
+        }
+        .team-link:hover::after {
+            transform: translateX(3px);
         }
 
         /* Nav */
@@ -238,10 +283,13 @@
         .footer-credits a {
             color: var(--text-muted);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: color 0.3s, transform 0.2s;
+            border-bottom: 1px solid transparent;
+            padding-bottom: 1px;
         }
         .footer-credits a:hover {
             color: var(--text-color);
+            border-bottom-color: var(--accent-color);
         }
         .font-misiori {
             font-family: 'Caveat', cursive;
@@ -295,7 +343,7 @@
                     <h3>misiori</h3>
                     <div class="role">Founder</div>
                     <p>Creator, developer and compiler</p>
-                    <a href="https://misiori.github.io" target="_blank" class="team-link">misiori.github.io →</a>
+                    <a href="https://misiori.github.io" target="_blank" class="team-link">misiori.github.io</a>
                 </div>
             </div>
 
@@ -304,17 +352,17 @@
                 <div class="team-card">
                     <h3>heisentm</h3>
                     <p>Creator of GeoBasics. Helps with meta analysis, level design, and educational content.</p>
-                    <a href="https://heisentm.github.io/geobasics/" target="_blank" class="team-link">GeoBasics →</a>
+                    <a href="https://heisentm.github.io/geobasics/" target="_blank" class="team-link">GeoBasics</a>
                 </div>
                 <div class="team-card">
                     <h3>everop</h3>
                     <p>Authored the Curaçao regionguessing guide and provides valuable Caribbean meta.</p>
-                    <a href="https://docs.google.com/document/d/17n5k8CL-jR_MeIpb6QmeaJJY_K-KkGSror_VnrbStWU/edit?tab=t.0" target="_blank" class="team-link">Curaçao Guide →</a>
+                    <a href="https://docs.google.com/document/d/17n5k8CL-jR_MeIpb6QmeaJJY_K-KkGSror_VnrbStWU/edit?tab=t.0" target="_blank" class="team-link">Curaçao Guide</a>
                 </div>
                 <div class="team-card">
                     <h3>Cleveland Brown Jr.</h3>
                     <p>Author of the upcoming Vietnam guide, which will be available on the platform soon.</p>
-                    <a href="https://docs.google.com/document/d/1zRCpnK_o7EX8kpRDuWuJBQLD1ePWKA5syZeBhQJRmtw/edit?usp=drivesdk">Vietnam Doc</a>
+                    <a href="https://docs.google.com/document/d/1zRCpnK_o7EX8kpRDuWuJBQLD1ePWKA5syZeBhQJRmtw/edit?usp=drivesdk" target="_blank" class="team-link">Vietnam Doc</a>
                 </div>
             </div>
         </section>
@@ -322,7 +370,7 @@
         <!-- How to contribute -->
         <section class="content-section">
             <h2>🤝 How to Contribute</h2>
-            <p>We would be really thankful if you'd contribute! To submit a guide or any meta clues, feel free to contact <a href="https://misiori.github.io/#socials" >misiori</a> on his Discord or any other social media. You can:</p>
+            <p>We would be really thankful if you'd contribute! To submit a guide or any meta clues, feel free to contact <a href="https://misiori.github.io/#socials" class="text-link" target="_blank">misiori</a> on his Discord or any other social media. You can:</p>
             <ul>
                 <li>Submit a guide or meta you've written.</li>
                 <li>Suggest corrections or improvements.</li>
